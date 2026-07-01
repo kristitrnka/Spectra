@@ -332,6 +332,7 @@ public class Iris {
         private static int lastCompileTestProgram = 0;
         private static int overlayTestProgram = 0;
         private static boolean renderTestLogged = false;
+        private static boolean postProcessTintEnabled = false;
 
         public static void loadSelectedShaderPack(String shaderPackName) {
             activeShaderPack = shaderPackName == null || shaderPackName.trim().isEmpty()
@@ -465,45 +466,163 @@ public class Iris {
                 System.out.println("[Spectra/Oculus] ... and " + (shaderFiles.size() - limit) + " more shader files");
             }
 
-            System.out.println("[Spectra/Oculus] NOTE: shaderpack is selected and parsed, but real GLSL rendering is not implemented yet");
+            System.out.println("[Spectra/Oculus] NOTE: shaderpack is selected and parsed; using Spectra lite ProgramSet pipeline now");
             compileFirstAvailableProgram(shaderPack, shaderFiles);
         }
 
         private static void compileFirstAvailableProgram(java.io.File shaderPack, java.util.List<String> shaderFiles) {
-            String[] preferredPrograms = new String[] {
+            net.coderbot.iris.spectra.SpectraProgramSet programSet = buildSpectraProgramSet(shaderPack, shaderFiles);
+            System.out.println("[Spectra/Oculus] Spectra ProgramSet loaded programs: " + programSet.size());
+
+            net.coderbot.iris.spectra.SpectraProgramSource postProgram = programSet.getFirstPostProcessProgram();
+            if (postProgram != null) {
+                System.out.println("[Spectra/Oculus] Spectra selected post-process program: " + postProgram.getName());
+                compileProgramSource(postProgram);
+                return;
+            }
+
+            net.coderbot.iris.spectra.SpectraProgramSource gbuffersProgram = programSet.getFirstGbuffersProgram();
+            if (gbuffersProgram != null) {
+                System.out.println("[Spectra/Oculus] Spectra selected gbuffers fallback program: " + gbuffersProgram.getName());
+                compileProgramSource(gbuffersProgram);
+                return;
+            }
+
+            System.out.println("[Spectra/Oculus] Spectra ProgramSet did not find a valid .vsh/.fsh program pair");
+        }
+
+        private static net.coderbot.iris.spectra.SpectraProgramSet buildSpectraProgramSet(java.io.File shaderPack, java.util.List<String> shaderFiles) {
+            net.coderbot.iris.spectra.SpectraProgramSet programSet = new net.coderbot.iris.spectra.SpectraProgramSet();
+
+            String[] programNames = new String[] {
+                    "final",
+                    "composite",
+                    "composite1",
+                    "composite2",
+                    "composite3",
+                    "composite4",
+                    "composite5",
+                    "composite6",
+                    "composite7",
+                    "composite8",
+                    "composite9",
+                    "composite10",
+                    "composite11",
+                    "composite12",
+                    "composite13",
+                    "composite14",
+                    "composite15",
                     "gbuffers_basic",
                     "gbuffers_textured",
-                    "gbuffers_terrain",
-                    "composite",
-                    "final"
+                    "gbuffers_textured_lit",
+                    "gbuffers_terrain"
             };
 
-            for (String programName : preferredPrograms) {
+            for (String programName : programNames) {
                 String vertexPath = "shaders/" + programName + ".vsh";
                 String fragmentPath = "shaders/" + programName + ".fsh";
 
-                if (shaderFiles.contains(vertexPath) && shaderFiles.contains(fragmentPath)) {
-                    compileTestProgram(shaderPack, programName, vertexPath, fragmentPath);
-                    return;
-                }
-            }
-
-            for (String file : shaderFiles) {
-                if (!file.toLowerCase(java.util.Locale.ROOT).endsWith(".vsh")) {
+                if (!shaderFiles.contains(vertexPath) || !shaderFiles.contains(fragmentPath)) {
                     continue;
                 }
 
-                String base = file.substring(0, file.length() - 4);
-                String fragmentPath = base + ".fsh";
+                String vertexSource = readShaderSourceWithIncludes(shaderPack, vertexPath);
+                String fragmentSource = readShaderSourceWithIncludes(shaderPack, fragmentPath);
 
-                if (shaderFiles.contains(fragmentPath)) {
-                    String programName = base.startsWith("shaders/") ? base.substring("shaders/".length()) : base;
-                    compileTestProgram(shaderPack, programName, file, fragmentPath);
-                    return;
-                }
+                programSet.addProgram(new net.coderbot.iris.spectra.SpectraProgramSource(
+                        programName,
+                        vertexPath,
+                        fragmentPath,
+                        vertexSource,
+                        fragmentSource
+                ));
             }
 
-            System.out.println("[Spectra/Oculus] No matching .vsh/.fsh shader pair found for compile test");
+            return programSet;
+        }
+
+        private static void compileProgramSource(net.coderbot.iris.spectra.SpectraProgramSource programSource) {
+            compileTestProgram(
+                    null,
+                    programSource.getName(),
+                    programSource.getVertexPath(),
+                    programSource.getFragmentPath(),
+                    programSource.getVertexSource(),
+                    programSource.getFragmentSource()
+            );
+        }
+
+        private static void compileTestProgram(java.io.File shaderPack, String programName, String vertexPath, String fragmentPath, String vertexSource, String fragmentSource) {
+            System.out.println("[Spectra/Oculus] Compile ProgramSet program: " + programName);
+
+            if (vertexSource == null) {
+                System.out.println("[Spectra/Oculus] Missing vertex shader source: " + vertexPath);
+                return;
+            }
+
+            if (fragmentSource == null) {
+                System.out.println("[Spectra/Oculus] Missing fragment shader source: " + fragmentPath);
+                return;
+            }
+
+            int vertexShader = 0;
+            int fragmentShader = 0;
+            int program = 0;
+
+            try {
+                vertexShader = compileShader(org.lwjgl.opengl.GL20.GL_VERTEX_SHADER, vertexPath, vertexSource);
+                if (vertexShader == 0) {
+                    return;
+                }
+
+                fragmentShader = compileShader(org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER, fragmentPath, fragmentSource);
+                if (fragmentShader == 0) {
+                    return;
+                }
+
+                program = org.lwjgl.opengl.GL20.glCreateProgram();
+                org.lwjgl.opengl.GL20.glAttachShader(program, vertexShader);
+                org.lwjgl.opengl.GL20.glAttachShader(program, fragmentShader);
+                org.lwjgl.opengl.GL20.glLinkProgram(program);
+
+                int linked = org.lwjgl.opengl.GL20.glGetProgrami(program, org.lwjgl.opengl.GL20.GL_LINK_STATUS);
+                String linkLog = org.lwjgl.opengl.GL20.glGetProgramInfoLog(program, 8192);
+
+                if (linked == org.lwjgl.opengl.GL11.GL_FALSE) {
+                    System.out.println("[Spectra/Oculus] ProgramSet program link FAILED: " + programName);
+                    if (linkLog != null && !linkLog.trim().isEmpty()) {
+                        System.out.println("[Spectra/Oculus] Program link log: " + linkLog.trim());
+                    }
+                    return;
+                }
+
+                if (lastCompileTestProgram != 0) {
+                    org.lwjgl.opengl.GL20.glDeleteProgram(lastCompileTestProgram);
+                }
+
+                lastCompileTestProgram = program;
+                program = 0;
+
+                System.out.println("[Spectra/Oculus] ProgramSet program linked successfully: " + programName + " id=" + lastCompileTestProgram);
+                if (linkLog != null && !linkLog.trim().isEmpty()) {
+                    System.out.println("[Spectra/Oculus] Program link log: " + linkLog.trim());
+                }
+            } catch (Throwable t) {
+                System.out.println("[Spectra/Oculus] ProgramSet compile crashed for program: " + programName);
+                t.printStackTrace();
+            } finally {
+                if (program != 0) {
+                    org.lwjgl.opengl.GL20.glDeleteProgram(program);
+                }
+
+                if (vertexShader != 0) {
+                    org.lwjgl.opengl.GL20.glDeleteShader(vertexShader);
+                }
+
+                if (fragmentShader != 0) {
+                    org.lwjgl.opengl.GL20.glDeleteShader(fragmentShader);
+                }
+            }
         }
 
         private static void compileTestProgram(java.io.File shaderPack, String programName, String vertexPath, String fragmentPath) {
@@ -618,7 +737,7 @@ public class Iris {
 
             String fragmentSource = "#version 120\n" +
                     "void main() {\n" +
-                    "    gl_FragColor = vec4(1.0, 0.0, 1.0, 0.75);\n" +
+                    "    gl_FragColor = vec4(1.0, 0.0, 0.0, 0.55);\n" +
                     "}\n";
 
             int vertexShader = 0;
@@ -854,7 +973,7 @@ public class Iris {
         }
 
         public static void renderTestOverlay() {
-            if (!shaderPackLoaded) {
+            if (!shaderPackLoaded || !postProcessTintEnabled) {
                 return;
             }
 
@@ -871,7 +990,7 @@ public class Iris {
 
             if (!renderTestLogged) {
                 renderTestLogged = true;
-                System.out.println("[Spectra/Oculus] Render test overlay is running with program id=" + programToUse);
+                System.out.println("[Spectra/Oculus] Post-process tint render hook is running with program id=" + programToUse);
             }
 
             int previousProgram = org.lwjgl.opengl.GL11.glGetInteger(org.lwjgl.opengl.GL20.GL_CURRENT_PROGRAM);
@@ -885,6 +1004,7 @@ public class Iris {
                 org.lwjgl.opengl.GL11.glDisable(org.lwjgl.opengl.GL11.GL_TEXTURE_2D);
                 org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL11.GL_BLEND);
                 org.lwjgl.opengl.GL11.glBlendFunc(org.lwjgl.opengl.GL11.GL_SRC_ALPHA, org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA);
+                org.lwjgl.opengl.GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 org.lwjgl.opengl.GL11.glDepthMask(false);
 
                 net.minecraft.client.gui.ScaledResolution scaledResolution = new net.minecraft.client.gui.ScaledResolution(minecraft);
@@ -902,10 +1022,10 @@ public class Iris {
 
                 org.lwjgl.opengl.GL20.glUseProgram(programToUse);
                 org.lwjgl.opengl.GL11.glBegin(org.lwjgl.opengl.GL11.GL_QUADS);
-                org.lwjgl.opengl.GL11.glVertex2f(10.0F, 10.0F);
-                org.lwjgl.opengl.GL11.glVertex2f(210.0F, 10.0F);
-                org.lwjgl.opengl.GL11.glVertex2f(210.0F, 110.0F);
-                org.lwjgl.opengl.GL11.glVertex2f(10.0F, 110.0F);
+                org.lwjgl.opengl.GL11.glVertex2f(0.0F, 0.0F);
+                org.lwjgl.opengl.GL11.glVertex2f(width, 0.0F);
+                org.lwjgl.opengl.GL11.glVertex2f(width, height);
+                org.lwjgl.opengl.GL11.glVertex2f(0.0F, height);
                 org.lwjgl.opengl.GL11.glEnd();
                 org.lwjgl.opengl.GL20.glUseProgram(0);
 
@@ -913,8 +1033,7 @@ public class Iris {
                 org.lwjgl.opengl.GL11.glBindTexture(org.lwjgl.opengl.GL11.GL_TEXTURE_2D, previousTexture);
                 org.lwjgl.opengl.GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-                net.minecraft.client.gui.Gui.drawRect(14, 14, 206, 106, 0xFFFF00FF);
-                minecraft.fontRenderer.drawStringWithShadow("Spectra render hook", 20, 20, 0xFFFFFF);
+                // Debug fallback tint disabled while porting the real shader pipeline.
             } catch (Throwable t) {
                 System.out.println("[Spectra/Oculus] Render test overlay crashed; disabling compiled shader program");
                 t.printStackTrace();
