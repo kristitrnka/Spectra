@@ -1,6 +1,8 @@
+import java.io.File
+
 plugins {
 	id "java-library"
-	id "com.gtnewhorizons.retrofuturagradle" version "1.3.26"
+	id "com.gtnewhorizons.retrofuturagradle" version "1.4.9"
 	id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
@@ -20,7 +22,7 @@ minecraft {
 	username.set("Developer")
 
 	injectedTags.put("MOD_VERSION", mod_version)
-	injectedTags.put("MOD_NAME", "Vintagium")
+	injectedTags.put("MOD_NAME", "Spectra")
 }
 
 tasks.injectTags.outputClassName.set("${mod_base_package}.Tags")
@@ -103,4 +105,88 @@ shadowJar {
 				'Main-Class': 'net.coderbot.iris.LaunchWarn'
 		)
 	}
+}
+
+// TEMP 1.12.2 port step: disable modern 1.16+/1.20 sources.
+// The Asek3 1.12.2 branch still contains lots of newer Iris/Oculus code.
+// We exclude any source file that imports modern Blaze3D/RenderType/MultiBufferSource APIs,
+// then we will re-port the needed pieces one by one.
+tasks.withType(JavaCompile).configureEach {
+    source = source.filter { file ->
+        def p = file.path.replace(File.separatorChar, '/' as char)
+
+        if (!p.endsWith('.java')) {
+            return true
+        }
+
+        def text = file.getText('UTF-8')
+
+        boolean modernPath =
+            p.contains('/src/main/java/net/irisshaders/iris/api/') ||
+            p.contains('/src/main/java/net/coderbot/batchedentityrendering/') ||
+            p.contains('/src/main/java/net/coderbot/iris/apiimpl/') ||
+            p.contains('/src/main/java/net/coderbot/iris/compat/sodium/') ||
+            p.contains('/src/main/java/net/coderbot/iris/config/') ||
+            p.contains('/src/main/java/net/coderbot/iris/colorspace/') ||
+            p.contains('/src/main/java/net/coderbot/iris/fantastic/') ||
+            p.contains('/src/main/java/net/coderbot/iris/gui/') ||
+            p.contains('/src/main/java/net/coderbot/iris/block_rendering/') ||
+            p.contains('/src/main/java/net/coderbot/iris/gl/blending/') ||
+            p.contains('/src/main/java/net/coderbot/iris/gl/program/') ||
+            p.contains('/src/main/java/net/coderbot/iris/gl/sampler/') ||
+            p.contains('/src/main/java/net/coderbot/iris/gl/image/') ||
+            p.contains('/src/main/java/net/coderbot/iris/gl/framebuffer/') ||
+            p.contains('/src/main/java/net/coderbot/iris/gl/shader/') ||
+            p.contains('/src/main/java/net/coderbot/iris/shaderpack/') ||
+            p.contains('/src/main/java/net/coderbot/iris/gl/texture/') ||
+            p.contains('/src/main/java/net/coderbot/iris/gl/uniform/') ||
+            p.contains('/src/main/java/net/coderbot/iris/helpers/') ||
+            p.contains('/src/main/java/net/coderbot/iris/layer/') ||
+            p.contains('/src/main/java/net/coderbot/iris/mixin/') ||
+            p.contains('/src/main/java/net/coderbot/iris/pipeline/') ||
+            p.contains('/src/main/java/net/coderbot/iris/postprocess/') ||
+            p.contains('/src/main/java/net/coderbot/iris/rendertarget/') ||
+            p.contains('/src/main/java/net/coderbot/iris/shadows/') ||
+            p.contains('/src/main/java/net/coderbot/iris/shadow/') ||
+            p.contains('/src/main/java/net/coderbot/iris/texture/') ||
+            p.contains('/src/main/java/net/coderbot/iris/uniforms/') ||
+            p.contains('/src/main/java/net/coderbot/iris/vertices/') ||
+            p.endsWith('/src/main/java/net/coderbot/iris/JomlConversions.java')
+
+        boolean modernImports =
+            text.contains('com.mojang.blaze3d') ||
+            text.contains('com.mojang.math') ||
+            text.contains('net.minecraft.client.Camera') ||
+            text.contains('net.minecraft.client.multiplayer.ClientLevel') ||
+            text.contains('net.minecraft.client.renderer.LevelRenderer') ||
+            text.contains('net.minecraft.client.renderer.MultiBufferSource') ||
+            text.contains('net.minecraft.client.renderer.RenderBuffers') ||
+            text.contains('net.minecraft.client.renderer.RenderType') ||
+            text.contains('net.minecraft.client.renderer.ItemBlockRenderTypes') ||
+            text.contains('net.minecraft.client.renderer.GameRenderer') ||
+            text.contains('net.minecraft.world.entity') ||
+            text.contains('net.minecraft.world.item') ||
+            text.contains('net.minecraft.world.level') ||
+            text.contains('net.minecraft.world.phys') ||
+            text.contains('net.minecraft.core.') ||
+            text.contains('net.minecraftforge.fml.loading') ||
+            text.contains('org.lwjgl.system') ||
+            text.contains('org.lwjgl.opengl.GL11C') ||
+            text.contains('org.lwjgl.opengl.GL13C') ||
+            text.contains('org.lwjgl.opengl.GL20C') ||
+            text.contains('org.lwjgl.opengl.GL30C') ||
+            text.contains('net.coderbot.iris.pipeline.') ||
+            text.contains('net.coderbot.iris.postprocess.') ||
+            text.contains('net.coderbot.iris.rendertarget.') ||
+            text.contains('net.coderbot.iris.shadows.') ||
+            text.contains('net.coderbot.iris.shadow.') ||
+            text.contains('net.coderbot.iris.colorspace.') ||
+            text.contains('net.coderbot.iris.vertices.') ||
+            text.contains('net.coderbot.iris.gl.IrisRenderSystem')
+
+        boolean brokenCompat =
+            p.endsWith('/src/main/java/nanolive/compat/NativeImage.java')
+
+        return !(modernPath || modernImports || brokenCompat)
+    }
 }

@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Class-Path: glsl-transformer-1.0.1.jar antlr4-runtime-4.10.1.jar
+

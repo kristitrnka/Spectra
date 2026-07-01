@@ -1,0 +1,641 @@
+src/main/java/net/coderbot/batchedentityrendering/impl/wrappers/TaggingRenderTypeWrapper.java:8:import net.coderbot.batchedentityrendering.impl.WrappableRenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/wrappers/TaggingRenderTypeWrapper.java:9:import net.coderbot.batchedentityrendering.mixin.RenderTypeAccessor;
+src/main/java/net/coderbot/batchedentityrendering/impl/wrappers/TaggingRenderTypeWrapper.java:10:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/wrappers/TaggingRenderTypeWrapper.java:12:public class TaggingRenderTypeWrapper extends RenderType implements WrappableRenderType {
+src/main/java/net/coderbot/batchedentityrendering/impl/wrappers/TaggingRenderTypeWrapper.java:14:    private final RenderType wrapped;
+src/main/java/net/coderbot/batchedentityrendering/impl/wrappers/TaggingRenderTypeWrapper.java:16:    public TaggingRenderTypeWrapper(String name, RenderType wrapped, int tag) {
+src/main/java/net/coderbot/batchedentityrendering/impl/wrappers/TaggingRenderTypeWrapper.java:25:    public RenderType unwrap() {
+src/main/java/net/coderbot/batchedentityrendering/impl/wrappers/TaggingRenderTypeWrapper.java:30:    public Optional<RenderType> outline() {
+src/main/java/net/coderbot/batchedentityrendering/impl/wrappers/TaggingRenderTypeWrapper.java:49:        TaggingRenderTypeWrapper other = (TaggingRenderTypeWrapper) object;
+src/main/java/net/coderbot/batchedentityrendering/impl/wrappers/TaggingRenderTypeWrapper.java:66:    private static boolean shouldSortOnUpload(RenderType type) {
+src/main/java/net/coderbot/batchedentityrendering/impl/wrappers/TaggingRenderTypeWrapper.java:67:        return ((RenderTypeAccessor) type).shouldSortOnUpload();
+src/main/java/net/coderbot/batchedentityrendering/impl/DrawCallTrackingRenderBuffers.java:5:	int getRenderTypes();
+src/main/java/net/coderbot/batchedentityrendering/impl/BufferSegmentRenderer.java:3:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/batchedentityrendering/impl/BufferSegmentRenderer.java:4:import com.mojang.blaze3d.vertex.BufferUploader;
+src/main/java/net/coderbot/batchedentityrendering/impl/BufferSegmentRenderer.java:20:        segment.getRenderType().setupRenderState();
+src/main/java/net/coderbot/batchedentityrendering/impl/BufferSegmentRenderer.java:22:        segment.getRenderType().clearRenderState();
+src/main/java/net/coderbot/batchedentityrendering/impl/WrappableRenderType.java:3:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/WrappableRenderType.java:5:public interface WrappableRenderType {
+src/main/java/net/coderbot/batchedentityrendering/impl/WrappableRenderType.java:7:	 * Returns the underlying wrapped RenderType. Might return itself if this RenderType doesn't wrap anything.
+src/main/java/net/coderbot/batchedentityrendering/impl/WrappableRenderType.java:9:	RenderType unwrap();
+src/main/java/net/coderbot/batchedentityrendering/impl/BatchingDebugMessageHelper.java:6:		int renderTypes = drawTracker.getRenderTypes();
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:9:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:10:import com.mojang.blaze3d.vertex.VertexConsumer;
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:13:import net.coderbot.batchedentityrendering.mixin.RenderTypeAccessor;
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:14:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:15:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:17:public class SegmentedBufferBuilder implements MultiBufferSource, MemoryTrackingBuffer {
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:19:    private final List<RenderType> usedTypes;
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:20:    private RenderType currentType;
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:31:    public VertexConsumer getBuffer(RenderType renderType) {
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:51:        if (RenderTypeUtil.isTriangleStripDrawMode(currentType)) {
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:74:        for (RenderType type : usedTypes) {
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:88:    private static boolean shouldSortOnUpload(RenderType type) {
+src/main/java/net/coderbot/batchedentityrendering/impl/SegmentedBufferBuilder.java:89:        return ((RenderTypeAccessor) type).shouldSortOnUpload();
+src/main/java/net/coderbot/batchedentityrendering/impl/BufferSegment.java:5:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/batchedentityrendering/impl/BufferSegment.java:7:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/BufferSegment.java:12:    private final RenderType type;
+src/main/java/net/coderbot/batchedentityrendering/impl/BufferSegment.java:14:    public BufferSegment(ByteBuffer slice, BufferBuilder.DrawState drawState, RenderType type) {
+src/main/java/net/coderbot/batchedentityrendering/impl/BufferSegment.java:28:    public RenderType getRenderType() {
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:12:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:13:import com.mojang.blaze3d.vertex.VertexConsumer;
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:17:import net.coderbot.iris.fantastic.WrappingMultiBufferSource;
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:19:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:20:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:23:public class FullyBufferedMultiBufferSource extends MultiBufferSource.BufferSource implements MemoryTrackingBuffer, Groupable, WrappingMultiBufferSource {
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:29:	 * An LRU cache mapping RenderType objects to a relevant buffer.
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:31:	private final LinkedHashMap<RenderType, Integer> affinities;
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:37:	private final List<Function<RenderType, RenderType>> wrappingFunctionStack;
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:38:	private Function<RenderType, RenderType> wrappingFunction = null;
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:40:	public FullyBufferedMultiBufferSource() {
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:60:	public VertexConsumer getBuffer(RenderType renderType) {
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:74:				Iterator<Map.Entry<RenderType, Integer>> iterator = affinities.entrySet().iterator();
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:75:				Map.Entry<RenderType, Integer> evicted = iterator.next();
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:97:		Map<RenderType, List<BufferSegment>> typeToSegment = new HashMap<>();
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:103:				typeToSegment.computeIfAbsent(segment.getRenderType(), (type) -> new ArrayList<>()).add(segment);
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:109:		Iterable<RenderType> renderOrder = renderOrderManager.getRenderOrder();
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:113:		for (RenderType type : renderOrder) {
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:138:	public int getRenderTypes() {
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:148:	public void endBatch(RenderType type) {
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:152:	public MultiBufferSource.BufferSource getUnflushableWrapper() {
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:194:	public void pushWrappingFunction(Function<RenderType, RenderType> wrappingFunction) {
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:221:	private static class UnflushableWrapper extends MultiBufferSource.BufferSource implements Groupable {
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:222:		private final FullyBufferedMultiBufferSource wrapped;
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:224:		UnflushableWrapper(FullyBufferedMultiBufferSource wrapped) {
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:231:		public VertexConsumer getBuffer(RenderType renderType) {
+src/main/java/net/coderbot/batchedentityrendering/impl/FullyBufferedMultiBufferSource.java:241:		public void endBatch(RenderType type) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:10:import net.coderbot.batchedentityrendering.impl.WrappableRenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:11:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:14:    private final EnumMap<TransparencyType, LinkedHashSet<RenderType>> renderTypes;
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:24:    private static TransparencyType getTransparencyType(RenderType type) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:25:        while (type instanceof WrappableRenderType) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:26:            type = ((WrappableRenderType) type).unwrap();
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:37:    public void begin(RenderType type) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:61:    public Iterable<RenderType> getRenderOrder() {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:64:        for (LinkedHashSet<RenderType> set : renderTypes.values()) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:68:        List<RenderType> allRenderTypes = new ArrayList<>(layerCount);
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:70:        for (LinkedHashSet<RenderType> set : renderTypes.values()) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:71:            allRenderTypes.addAll(set);
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/TranslucencyRenderOrderManager.java:74:        return allRenderTypes;
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/SimpleRenderOrderManager.java:5:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/SimpleRenderOrderManager.java:8:    private final LinkedHashSet<RenderType> renderTypes;
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/SimpleRenderOrderManager.java:14:    public void begin(RenderType type) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/SimpleRenderOrderManager.java:36:    public Iterable<RenderType> getRenderOrder() {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/RenderOrderManager.java:3:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/RenderOrderManager.java:6:    void begin(RenderType type);
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/RenderOrderManager.java:11:    Iterable<RenderType> getRenderOrder();
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:16:import net.coderbot.batchedentityrendering.impl.WrappableRenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:17:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:21:    private final EnumMap<TransparencyType, Digraph<RenderType>> types;
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:24:    private final EnumMap<TransparencyType, RenderType> currentTypes;
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:36:    private static TransparencyType getTransparencyType(RenderType type) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:37:        while (type instanceof WrappableRenderType) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:38:            type = ((WrappableRenderType) type).unwrap();
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:49:    public void begin(RenderType renderType) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:51:        Digraph<RenderType> graph = types.get(transparencyType);
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:55:			RenderType previous = currentTypes.put(transparencyType, renderType);
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:105:    public Iterable<RenderType> getRenderOrder() {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:108:        for (Digraph<RenderType> graph : types.values()) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:112:        List<RenderType> allLayers = new ArrayList<>(layerCount);
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:114:        for (Digraph<RenderType> graph : types.values()) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:119:            FeedbackArcSet<RenderType> arcSet =
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:128:                for (RenderType source : arcSet.vertices()) {
+src/main/java/net/coderbot/batchedentityrendering/impl/ordering/GraphTranslucencyRenderOrderManager.java:129:                    for (RenderType target : arcSet.targets(source)) {
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:12:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:13:import com.mojang.blaze3d.vertex.VertexConsumer;
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:17:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:18:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:20:public class OldFullyBufferedMultiBufferSource extends MultiBufferSource.BufferSource {
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:21:	private final Map<RenderType, BufferBuilder> bufferBuilders;
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:22:	private final Object2IntMap<RenderType> unused;
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:26:	private final Set<RenderType> typesThisFrame;
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:27:	private final List<RenderType> typesInOrder;
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:29:	public OldFullyBufferedMultiBufferSource() {
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:41:	private TransparencyType getTransparencyType(RenderType type) {
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:42:		while (type instanceof WrappableRenderType) {
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:43:			type = ((WrappableRenderType) type).unwrap();
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:55:	public VertexConsumer getBuffer(RenderType renderType) {
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:88:		List<RenderType> removedTypes = new ArrayList<>();
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:105:		for (RenderType removed : removedTypes) {
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:112:		for (RenderType type : typesInOrder) {
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:123:	public void endBatch(RenderType type) {
+src/main/java/net/coderbot/batchedentityrendering/impl/OldFullyBufferedMultiBufferSource.java:127:	private void drawInternal(RenderType type) {
+src/main/java/net/coderbot/batchedentityrendering/impl/RenderTypeUtil.java:3:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/impl/RenderTypeUtil.java:6:public class RenderTypeUtil {
+src/main/java/net/coderbot/batchedentityrendering/impl/RenderTypeUtil.java:7:    public static boolean isTriangleStripDrawMode(RenderType renderType) {
+src/main/java/net/coderbot/batchedentityrendering/impl/FlushableMultiBufferSource.java:3:public interface FlushableMultiBufferSource {
+src/main/java/net/coderbot/batchedentityrendering/impl/BufferBuilderExt.java:5:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinTheEndPortalRenderer.java:10:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinTheEndPortalRenderer.java:13:import net.coderbot.batchedentityrendering.impl.wrappers.TaggingRenderTypeWrapper;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinTheEndPortalRenderer.java:14:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinTheEndPortalRenderer.java:24:            "Lnet/minecraft/client/renderer/blockentity/TheEndPortalRenderer;render(Lnet/minecraft/world/level/block/entity/TheEndPortalBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V";
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinTheEndPortalRenderer.java:27:			= "Lcom/mojang/blaze3d/vertex/PoseStack$Pose;pose()Lcom/mojang/math/Matrix4f;";
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinTheEndPortalRenderer.java:39:    private MultiBufferSource iris$wrapBufferSource(MultiBufferSource bufferSource) {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinTheEndPortalRenderer.java:50:			return type -> bufferSource.getBuffer(new TaggingRenderTypeWrapper(type.toString(), type, index++));
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinTheEndPortalRenderer.java:57:    private void iris$endRenderingPortal(TheEndPortalBlockEntity entity, float tickDelta, PoseStack poseStack,
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinTheEndPortalRenderer.java:58:										 MultiBufferSource bufferSource, int light, int overlay,
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBufferBuilder_SegmentRendering.java:16:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBufferBuilder_SegmentRendering.java:17:import com.mojang.blaze3d.vertex.VertexFormat;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer_EntityListSorting.java:15:import net.minecraft.client.multiplayer.ClientLevel;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer_EntityListSorting.java:16:import net.minecraft.client.renderer.LevelRenderer;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer_EntityListSorting.java:24: * Sorting reduces the number of RenderTypes that need to be active at any given time for batching to be effective.
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer_EntityListSorting.java:39:@Mixin(value = LevelRenderer.class, priority = 999)
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer_EntityListSorting.java:40:public class MixinLevelRenderer_EntityListSorting {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer_EntityListSorting.java:42:	private ClientLevel level;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer_EntityListSorting.java:45:			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderBuffers;bufferSource()Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;"),
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer_EntityListSorting.java:46:					to = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderDispatcher;shouldRender(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/client/renderer/culling/Frustum;DDD)Z")), allow = 1)
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBufferSource.java:9:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBufferSource.java:12:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBufferSource.java:13:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBufferSource.java:15:@Mixin(MultiBufferSource.BufferSource.class)
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBufferSource.java:23:	protected Map<RenderType, BufferBuilder> fixedBuffers;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinRenderBuffers.java:12:import net.coderbot.batchedentityrendering.impl.FullyBufferedMultiBufferSource;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinRenderBuffers.java:16:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinRenderBuffers.java:23:	private final FullyBufferedMultiBufferSource buffered = new FullyBufferedMultiBufferSource();
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinRenderBuffers.java:36:	private MultiBufferSource.BufferSource bufferSource;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinRenderBuffers.java:39:	private void batchedentityrendering$replaceBufferSource(CallbackInfoReturnable<MultiBufferSource.BufferSource> cir) {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinRenderBuffers.java:48:	private void batchedentityrendering$replaceCrumblingBufferSource(CallbackInfoReturnable<MultiBufferSource.BufferSource> cir) {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinRenderBuffers.java:53:		// NB: We can return the same MultiBufferSource here as long as the block entity and its breaking animation
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinRenderBuffers.java:115:	public int getRenderTypes() {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinRenderBuffers.java:116:		return buffered.getRenderTypes();
+src/main/java/net/coderbot/batchedentityrendering/mixin/RenderTypeAccessor.java:6:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/mixin/RenderTypeAccessor.java:8:@Mixin(RenderType.class)
+src/main/java/net/coderbot/batchedentityrendering/mixin/RenderTypeAccessor.java:9:public interface RenderTypeAccessor {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinRenderType.java:5:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinRenderType.java:8:@Mixin(RenderType.class)
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinRenderType.java:9:public class MixinRenderType implements BlendingStateHolder {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBufferBuilder.java:8:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/batchedentityrendering/mixin/CompositeStateAccessor.java:7:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/mixin/CompositeStateAccessor.java:9:@Mixin(RenderType.CompositeState.class)
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBannerRenderer_Disabled.java:12:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBannerRenderer_Disabled.java:16:import net.coderbot.batchedentityrendering.impl.wrappers.TaggingRenderTypeWrapper;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBannerRenderer_Disabled.java:18:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBannerRenderer_Disabled.java:31:            "Lnet/minecraft/client/renderer/blockentity/BannerRenderer;renderPatterns(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/client/model/geom/ModelPart;Lnet/minecraft/client/resources/model/Material;ZLjava/util/List;Z)V";
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBannerRenderer_Disabled.java:42:    private static MultiBufferSource iris$wrapBufferSource(MultiBufferSource multiBufferSource) {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBannerRenderer_Disabled.java:52:			// NB: Groupable not needed for this implementation of MultiBufferSource.
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBannerRenderer_Disabled.java:53:			return type -> multiBufferSource.getBuffer(new TaggingRenderTypeWrapper(type.toString(), type, index++));
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinBannerRenderer_Disabled.java:60:    private static void iris$endRenderingCanvas(PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, ModelPart modelPart, Material material, boolean bl, List<Pair<BannerPattern, DyeColor>> list, boolean bl2, CallbackInfo ci) {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:11:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:12:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:17:import net.minecraft.client.Camera;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:20:import net.minecraft.client.renderer.LevelRenderer;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:22:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:30:@Mixin(value = LevelRenderer.class, priority = 999)
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:31:public class MixinLevelRenderer {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:33:			"Lnet/minecraft/client/renderer/LevelRenderer;renderEntity(Lnet/minecraft/world/entity/Entity;DDDFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;)V";
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:42:	private void batchedentityrendering$beginLevelRender(PoseStack poseStack, float f, long l, boolean bl, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:48:		MultiBufferSource provider = renderBuffers.bufferSource();
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:56:	private void batchedentityrendering$preRenderEntity(PoseStack poseStack, float f, long l, boolean bl, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:63:	private void batchedentityrendering$postRenderEntity(PoseStack poseStack, float f, long l, boolean bl, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:70:	private void batchedentityrendering$beginTranslucents(PoseStack poseStack, float f, long l, boolean bl, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinLevelRenderer.java:76:	private void batchedentityrendering$endLevelRender(PoseStack poseStack, float f, long l, boolean bl, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinCompositeRenderType.java:9:import com.mojang.blaze3d.vertex.VertexFormat;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinCompositeRenderType.java:14:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinCompositeRenderType.java:16:@Mixin(targets = "net/minecraft/client/renderer/RenderType$CompositeRenderType")
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinCompositeRenderType.java:17:public abstract class MixinCompositeRenderType extends RenderType implements BlendingStateHolder {
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinCompositeRenderType.java:19:			"<init>(Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;IIZZLnet/minecraft/client/renderer/RenderType$CompositeState;)V";
+src/main/java/net/coderbot/batchedentityrendering/mixin/MixinCompositeRenderType.java:24:	private MixinCompositeRenderType(String name, VertexFormat vertexFormat, int drawMode, int expectedBufferSize, boolean hasCrumbling, boolean translucent, Runnable startAction, Runnable endAction) {
+src/main/java/net/coderbot/iris/pipeline/FixedFunctionWorldRenderingPipeline.java:6:import com.mojang.blaze3d.platform.GlStateManager;
+src/main/java/net/coderbot/iris/pipeline/FixedFunctionWorldRenderingPipeline.java:12:import net.coderbot.iris.mixin.LevelRendererAccessor;
+src/main/java/net/coderbot/iris/pipeline/FixedFunctionWorldRenderingPipeline.java:15:import net.minecraft.client.Camera;
+src/main/java/net/coderbot/iris/pipeline/FixedFunctionWorldRenderingPipeline.java:18:import net.minecraft.client.renderer.culling.ICamera;
+src/main/java/net/coderbot/iris/pipeline/FixedFunctionWorldRenderingPipeline.java:37:	public void renderShadows(LevelRendererAccessor levelRenderer, ICamera camera) {
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:3:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:4:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:6:import net.coderbot.batchedentityrendering.impl.FullyBufferedMultiBufferSource;
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:11:import net.minecraft.client.Camera;
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:14:import net.minecraft.client.renderer.ItemBlockRenderTypes;
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:15:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:33:	private final FullyBufferedMultiBufferSource bufferSource = new FullyBufferedMultiBufferSource();
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:37:	private void setupGlState(GameRenderer gameRenderer, Camera camera, PoseStack poseStack, float tickDelta) {
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:38:        final PoseStack.Pose pose = poseStack.last();
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:55:	private boolean canRender(Camera camera, GameRenderer gameRenderer) {
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:80:	public void renderSolid(PoseStack poseStack, float tickDelta, Camera camera, GameRenderer gameRenderer, WorldRenderingPipeline pipeline) {
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:97:		Minecraft.getInstance().getItemInHandRenderer().renderHandsWithItems(tickDelta, poseStack, bufferSource, Minecraft.getInstance().player, Minecraft.getInstance().getEntityRenderDispatcher().getPackedLightCoords(camera.getEntity(), tickDelta));
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:114:	public void renderTranslucent(PoseStack poseStack, float tickDelta, Camera camera, GameRenderer gameRenderer, WorldRenderingPipeline pipeline) {
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:129:		Minecraft.getMinecraft().getItemInHandRenderer().renderHandsWithItems(tickDelta, poseStack, bufferSource, Minecraft.getMinecraft().player, Minecraft.getInstance().getEntityRenderDispatcher().getPackedLightCoords(camera.getEntity(), tickDelta));
+src/main/java/net/coderbot/iris/pipeline/HandRenderer.java:152:	public FullyBufferedMultiBufferSource getBufferSource() {
+src/main/java/net/coderbot/iris/pipeline/DeferredWorldRenderingPipeline.java:29:import net.coderbot.iris.mixin.LevelRendererAccessor;
+src/main/java/net/coderbot/iris/pipeline/DeferredWorldRenderingPipeline.java:59:import net.minecraft.client.renderer.culling.ICamera;
+src/main/java/net/coderbot/iris/pipeline/DeferredWorldRenderingPipeline.java:187:		BlockRenderingSettings.INSTANCE.setBlockTypeIds(BlockMaterialMapping.createBlockTypeMap(programs.getPack().getIdMap().getBlockRenderTypeMap()));
+src/main/java/net/coderbot/iris/pipeline/DeferredWorldRenderingPipeline.java:1066:	public void renderShadows(LevelRendererAccessor levelRenderer, ICamera playerCamera) {
+src/main/java/net/coderbot/iris/pipeline/DeferredWorldRenderingPipeline.java:1078:			shadowRenderer.renderShadows(levelRenderer, playerCamera);
+src/main/java/net/coderbot/iris/pipeline/HorizonRenderer.java:10:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:11:import net.minecraft.client.renderer.culling.ICamera;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:25:import com.mojang.blaze3d.systems.RenderSystem;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:26:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:27:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:35:import net.coderbot.iris.mixin.LevelRendererAccessor;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:50:import net.coderbot.iris.uniforms.CameraUniforms;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:55:import net.minecraft.client.Camera;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:57:import net.minecraft.client.multiplayer.ClientLevel;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:58:import net.minecraft.client.renderer.LevelRenderer;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:59:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:61:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:62:import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:64:import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:154:	public static PoseStack createShadowModelView(float sunPathRotation, float intervalSize) {
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:156:		Vector3d cameraPos = CameraUniforms.getUnshiftedCameraPosition();
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:163:		PoseStack modelView = new PoseStack();
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:362:	private void renderEntities(LevelRendererAccessor levelRenderer, Frustum frustum, MultiBufferSource.BufferSource bufferSource, PoseStack modelView, double cameraX, double cameraY, double cameraZ, float tickDelta) {
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:363:		RenderManager dispatcher = levelRenderer.getEntityRenderDispatcher();
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:398:	private void renderPlayerEntity(LevelRendererAccessor levelRenderer, Frustum frustum, MultiBufferSource.BufferSource bufferSource, PoseStack modelView, double cameraX, double cameraY, double cameraZ, float tickDelta) {
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:399:		RenderManager dispatcher = levelRenderer.getEntityRenderDispatcher();
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:434:	private void renderBlockEntities(MultiBufferSource.BufferSource bufferSource, PoseStack modelView, double cameraX, double cameraY, double cameraZ, float tickDelta, boolean hasEntityFrustum) {
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:464:	public void renderShadows(LevelRendererAccessor levelRenderer, ICamera playerCamera) {
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:485:		PoseStack modelView = createShadowModelView(this.sunPathRotation, this.intervalSize);
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:509:		Vector3d cameraPos = CameraUniforms.getUnshiftedCameraPosition();
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:536:		levelRenderer.invokeSetupRender(playerCamera, terrainFrustumHolder.getFrustum(), false, levelRenderer.getFrameId(), false);
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:588:		MultiBufferSource.BufferSource bufferSource = buffers.bufferSource();
+src/main/java/net/coderbot/iris/pipeline/ShadowRenderer.java:619:		// worldRenderer.invokeRenderType(RenderType.getTripwire(), modelView, cameraX, cameraY, cameraZ);
+src/main/java/net/coderbot/iris/pipeline/WorldRenderingPhase.java:30:	public static WorldRenderingPhase fromTerrainRenderType(BlockRenderLayer renderType) {
+src/main/java/net/coderbot/iris/pipeline/WorldRenderingPipeline.java:9:import net.coderbot.iris.mixin.LevelRendererAccessor;
+src/main/java/net/coderbot/iris/pipeline/WorldRenderingPipeline.java:12:import net.minecraft.client.renderer.culling.ICamera;
+src/main/java/net/coderbot/iris/pipeline/WorldRenderingPipeline.java:16:	void renderShadows(LevelRendererAccessor levelRenderer, ICamera camera);
+src/main/java/net/coderbot/iris/vertices/IrisVertexFormats.java:4:import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+src/main/java/net/coderbot/iris/vertices/IrisVertexFormats.java:5:import com.mojang.blaze3d.vertex.VertexFormat;
+src/main/java/net/coderbot/iris/vertices/IrisVertexFormats.java:6:import com.mojang.blaze3d.vertex.VertexFormatElement;
+src/main/java/net/coderbot/iris/vertices/NormI8.java:3:import com.mojang.math.Vector3f;
+src/main/java/net/coderbot/iris/JomlConversions.java:13:	public static Vector4f toJoml(com.mojang.math.Vector4f v) {
+src/main/java/net/coderbot/iris/compat/sodium/impl/shader_overrides/IrisChunkProgram.java:10:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/compat/sodium/impl/shader_overrides/IrisChunkProgram.java:11:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/separate_ao/MixinBufferBuilder_IntrinsicSeparateAo.java:3:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/separate_ao/MixinBufferBuilder_IntrinsicSeparateAo.java:4:import com.mojang.blaze3d.vertex.DefaultedVertexConsumer;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/separate_ao/MixinBufferBuilder_IntrinsicSeparateAo.java:5:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/separate_ao/MixinBufferBuilder_IntrinsicSeparateAo.java:6:import com.mojang.math.Matrix3f;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/separate_ao/MixinBufferBuilder_IntrinsicSeparateAo.java:7:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/separate_ao/MixinBufferBuilder_IntrinsicSeparateAo.java:8:import com.mojang.math.Vector4f;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/separate_ao/MixinBufferBuilder_IntrinsicSeparateAo.java:30:    public void putBulkData(PoseStack.Pose matrixEntry, BakedQuad quad, float[] brightnesses, float red, float green,
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinGameRendererContext.java:7:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinGameRendererContext.java:20:					target = "com/mojang/math/Matrix4f.copy ()Lcom/mojang/math/Matrix4f;"))
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:34:	private double lastCameraX, lastCameraY, lastCameraZ, lastCameraPitch, lastCameraYaw;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:37:	private double iris$swapLastCameraX, iris$swapLastCameraY, iris$swapLastCameraZ,
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:38:		iris$swapLastCameraPitch, iris$swapLastCameraYaw;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:41:	private void swapCachedCameraPositions() {
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:44:		tmp = lastCameraX;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:45:		lastCameraX = iris$swapLastCameraX;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:46:		iris$swapLastCameraX = tmp;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:48:		tmp = lastCameraY;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:49:		lastCameraY = iris$swapLastCameraY;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:50:		iris$swapLastCameraY = tmp;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:52:		tmp = lastCameraZ;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:53:		lastCameraZ = iris$swapLastCameraZ;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:54:		iris$swapLastCameraZ = tmp;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:56:		tmp = lastCameraPitch;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:57:		lastCameraPitch = iris$swapLastCameraPitch;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:58:		iris$swapLastCameraPitch = tmp;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:60:		tmp = lastCameraYaw;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:61:		lastCameraYaw = iris$swapLastCameraYaw;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:62:		iris$swapLastCameraYaw = tmp;
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:70:				swapCachedCameraPositions();
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:77:				swapCachedCameraPositions();
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:103:					 target = "me/jellysquid/mods/sodium/client/render/SodiumWorldRenderer.lastCameraX : D",
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:112:					target = "me/jellysquid/mods/sodium/client/render/SodiumWorldRenderer.lastCameraX : D",
+src/main/java/net/coderbot/iris/compat/sodium/mixin/shadow_map/MixinSodiumWorldRenderer.java:124:			return lastCameraX;
+src/main/java/net/coderbot/iris/fantastic/IrisParticleRenderTypes.java:3:import com.mojang.blaze3d.systems.RenderSystem;
+src/main/java/net/coderbot/iris/fantastic/IrisParticleRenderTypes.java:4:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/iris/fantastic/IrisParticleRenderTypes.java:5:import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+src/main/java/net/coderbot/iris/fantastic/IrisParticleRenderTypes.java:6:import com.mojang.blaze3d.vertex.Tesselator;
+src/main/java/net/coderbot/iris/fantastic/IrisParticleRenderTypes.java:8:import net.minecraft.client.particle.ParticleRenderType;
+src/main/java/net/coderbot/iris/fantastic/IrisParticleRenderTypes.java:12:public class IrisParticleRenderTypes {
+src/main/java/net/coderbot/iris/fantastic/IrisParticleRenderTypes.java:13:	public static final ParticleRenderType OPAQUE_TERRAIN = new ParticleRenderType() {
+src/main/java/net/coderbot/iris/fantastic/WrappingMultiBufferSource.java:5:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/fantastic/WrappingMultiBufferSource.java:7:public interface WrappingMultiBufferSource {
+src/main/java/net/coderbot/iris/fantastic/WrappingMultiBufferSource.java:8:	void pushWrappingFunction(Function<RenderType, RenderType> wrappingFunction);
+src/main/java/net/coderbot/iris/Iris.java:4:import com.mojang.blaze3d.platform.GlDebug;
+src/main/java/net/coderbot/iris/shadows/ShadowRenderingState.java:3:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/shadow/ShadowMatrices.java:5:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/shadow/ShadowMatrices.java:6:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/shadow/ShadowMatrices.java:7:import com.mojang.math.Vector3f;
+src/main/java/net/coderbot/iris/shadow/ShadowMatrices.java:43:	public static void createBaselineModelViewMatrix(PoseStack target, float shadowAngle, float sunPathRotation) {
+src/main/java/net/coderbot/iris/shadow/ShadowMatrices.java:61:	public static void snapModelViewToGrid(PoseStack target, float shadowIntervalSize, double cameraX, double cameraY, double cameraZ) {
+src/main/java/net/coderbot/iris/shadow/ShadowMatrices.java:92:	public static void createModelViewMatrix(PoseStack target, float shadowAngle, float shadowIntervalSize,
+src/main/java/net/coderbot/iris/shadow/ShadowMatrices.java:154:			PoseStack modelView = new PoseStack();
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinEntityRenderDispatcher.java:7:import net.coderbot.iris.layer.OuterWrappedRenderType;
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinEntityRenderDispatcher.java:9:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinEntityRenderDispatcher.java:11:import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinEntityRenderDispatcher.java:24:@Mixin(EntityRenderDispatcher.class)
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinEntityRenderDispatcher.java:25:public class MixinEntityRenderDispatcher {
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinEntityRenderDispatcher.java:27:	@ModifyVariable(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V", shift = At.Shift.AFTER),
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinEntityRenderDispatcher.java:29:	private MultiBufferSource iris$beginEntityRender(MultiBufferSource bufferSource, Entity entity) {
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinEntityRenderDispatcher.java:47:				bufferSource.getBuffer(OuterWrappedRenderType.wrapExactlyOnce("iris:is_entity", type, phase));
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinBlockEntityRenderDispatcher.java:7:import net.coderbot.iris.layer.OuterWrappedRenderType;
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinBlockEntityRenderDispatcher.java:8:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinBlockEntityRenderDispatcher.java:10:import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinBlockEntityRenderDispatcher.java:22:@Mixin(BlockEntityRenderDispatcher.class)
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinBlockEntityRenderDispatcher.java:23:public class MixinBlockEntityRenderDispatcher {
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinBlockEntityRenderDispatcher.java:31:	// NOTE: This is the last location that we can inject at, because the MultiBufferSource variable gets
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinBlockEntityRenderDispatcher.java:36:	private MultiBufferSource iris$wrapBufferSource(MultiBufferSource bufferSource, BlockEntity blockEntity) {
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinBlockEntityRenderDispatcher.java:48:		// At this point, based on where we are in BlockEntityRenderDispatcher:
+src/main/java/net/coderbot/iris/mixin/entity_render_context/MixinBlockEntityRenderDispatcher.java:62:				bufferSource.getBuffer(OuterWrappedRenderType.wrapExactlyOnce("iris:is_block_entity", type, stateShard));
+src/main/java/net/coderbot/iris/mixin/MixinMinecraft_PipelineManagement.java:32:	 * Injects before LevelRenderer receives the new level, or is notified of the level unload.
+src/main/java/net/coderbot/iris/mixin/MixinTheEndPortalRenderer.java:14:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/mixin/MixinTheEndPortalRenderer.java:15:import com.mojang.blaze3d.vertex.VertexConsumer;
+src/main/java/net/coderbot/iris/mixin/MixinTheEndPortalRenderer.java:16:import com.mojang.math.Matrix3f;
+src/main/java/net/coderbot/iris/mixin/MixinTheEndPortalRenderer.java:17:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/mixin/MixinTheEndPortalRenderer.java:21:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/iris/mixin/MixinTheEndPortalRenderer.java:22:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/mixin/MixinTheEndPortalRenderer.java:63:				multiBufferSource.getBuffer(RenderType.entitySolid(TheEndPortalRenderer.END_PORTAL_LOCATION));
+src/main/java/net/coderbot/iris/mixin/vertices/MixinVertexBuffer.java:11:import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+src/main/java/net/coderbot/iris/mixin/vertices/MixinVertexBuffer.java:12:import com.mojang.blaze3d.vertex.VertexBuffer;
+src/main/java/net/coderbot/iris/mixin/vertices/MixinVertexBuffer.java:13:import com.mojang.blaze3d.vertex.VertexFormat;
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:9:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:10:import com.mojang.blaze3d.vertex.VertexFormat;
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:14:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:15:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:21:@Mixin(MultiBufferSource.BufferSource.class)
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:23:	@Redirect(method = "getBuffer(Lnet/minecraft/client/renderer/RenderType;)Lcom/mojang/blaze3d/vertex/VertexConsumer;",
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:25:			target = "com/mojang/blaze3d/vertex/BufferBuilder.begin (ILcom/mojang/blaze3d/vertex/VertexFormat;)V"))
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:34:	@Inject(method = "endBatch(Lnet/minecraft/client/renderer/RenderType;)V",
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:36:			target = "net/minecraft/client/renderer/RenderType.end (Lcom/mojang/blaze3d/vertex/BufferBuilder;III)V"))
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:37:	private void iris$beforeFlushBuffer(RenderType renderType, CallbackInfo ci) {
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:43:	@Inject(method = "endBatch(Lnet/minecraft/client/renderer/RenderType;)V",
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:45:			target = "net/minecraft/client/renderer/RenderType.end (Lcom/mojang/blaze3d/vertex/BufferBuilder;III)V",
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinBufferSource.java:47:	private void iris$afterFlushBuffer(RenderType renderType, CallbackInfo ci) {
+src/main/java/net/coderbot/iris/mixin/vertices/immediate/MixinLevelRenderer.java:12:public class MixinLevelRenderer {
+src/main/java/net/coderbot/iris/mixin/vertices/MixinVertexFormat.java:8:import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+src/main/java/net/coderbot/iris/mixin/vertices/MixinVertexFormat.java:9:import com.mojang.blaze3d.vertex.VertexFormat;
+src/main/java/net/coderbot/iris/mixin/vertices/MixinBufferBuilder.java:18:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/iris/mixin/vertices/MixinBufferBuilder.java:19:import com.mojang.blaze3d.vertex.BufferVertexConsumer;
+src/main/java/net/coderbot/iris/mixin/vertices/MixinBufferBuilder.java:20:import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+src/main/java/net/coderbot/iris/mixin/vertices/MixinBufferBuilder.java:21:import com.mojang.blaze3d.vertex.VertexFormat;
+src/main/java/net/coderbot/iris/mixin/vertices/MixinBufferBuilder.java:22:import com.mojang.blaze3d.vertex.VertexFormatElement;
+src/main/java/net/coderbot/iris/mixin/vertices/MixinBufferBuilder.java:59:	private short currentRenderType;
+src/main/java/net/coderbot/iris/mixin/vertices/MixinBufferBuilder.java:169:			this.putShort(2, currentRenderType);
+src/main/java/net/coderbot/iris/mixin/vertices/MixinBufferBuilder.java:260:		this.currentRenderType = renderType;
+src/main/java/net/coderbot/iris/mixin/vertices/MixinBufferBuilder.java:269:		this.currentRenderType = -1;
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinChunkRebuildTask.java:14:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinChunkRebuildTask.java:15:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinChunkRebuildTask.java:22:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinChunkRebuildTask.java:64:	@Inject(method = RENDER, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockRenderDispatcher;renderLiquid(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/level/material/FluidState;)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinChunkRebuildTask.java:65:	private void iris$onRenderLiquid(float cameraX, float cameraY, float cameraZ, ChunkRenderDispatcher.CompiledChunk data, ChunkBufferBuilderPack buffers, CallbackInfoReturnable<Set<BlockEntity>> cir, int i, BlockPos blockPos, BlockPos blockPos2, VisGraph chunkOcclusionDataBuilder, Set<BlockEntity> set, RenderChunkRegion chunkRendererRegion, PoseStack poseStack, Random random, BlockRenderDispatcher blockRenderManager, Iterator<BlockPos> var15, BlockPos pos, BlockState blockState, Block block, FluidState fluidState, IModelData modelData, Iterator iterator, RenderType renderType, BufferBuilder bufferBuilder) {
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinChunkRebuildTask.java:73:	@Inject(method = RENDER, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockRenderDispatcher;renderLiquid(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/level/material/FluidState;)Z", shift = At.Shift.AFTER))
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinChunkRebuildTask.java:81:	@Inject(method = RENDER, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockRenderDispatcher;renderModel(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLjava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinChunkRebuildTask.java:82:	private void iris$onRenderBlock(float cameraX, float cameraY, float cameraZ, ChunkRenderDispatcher.CompiledChunk data, ChunkBufferBuilderPack buffers, CallbackInfoReturnable<Set<BlockEntity>> cir, int i, BlockPos blockPos, BlockPos blockPos2, VisGraph chunkOcclusionDataBuilder, Set<BlockEntity> set, RenderChunkRegion chunkRendererRegion, PoseStack poseStack, Random random, BlockRenderDispatcher blockRenderManager, Iterator<BlockPos> posIterator, BlockPos pos, BlockState blockState, Block block, FluidState fluidState, IModelData modelData, Iterator iterator, RenderType renderType, RenderType renderType2, BufferBuilder bufferBuilder) {
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinChunkRebuildTask.java:89:	@Inject(method = RENDER, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockRenderDispatcher;renderModel(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLjava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Z", shift = At.Shift.AFTER))
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinClientLevel.java:8:import net.minecraft.client.multiplayer.ClientLevel;
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinClientLevel.java:14:@Mixin(ClientLevel.class)
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinClientLevel.java:15:public class MixinClientLevel {
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinBufferBuilder_SeparateAo.java:8:import com.mojang.blaze3d.vertex.BufferBuilder;
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinBufferBuilder_SeparateAo.java:9:import com.mojang.blaze3d.vertex.DefaultedVertexConsumer;
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinBufferBuilder_SeparateAo.java:10:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/mixin/vertices/block_rendering/MixinBufferBuilder_SeparateAo.java:37:	public void putBulkData(PoseStack.Pose matrixEntry, BakedQuad quad, float[] brightnesses, float red, float green,
+src/main/java/net/coderbot/iris/mixin/rendertype/MixinRenderStateShard_Tagging.java:15:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/mixin/rendertype/MixinRenderStateShard_Tagging.java:36:		// We only want to apply this to RenderTypes.
+src/main/java/net/coderbot/iris/mixin/rendertype/MixinRenderStateShard_Tagging.java:37:		if (!((Object) this instanceof RenderType)) {
+src/main/java/net/coderbot/iris/mixin/rendertype/MixinRenderType_FixTerrainAlpha.java:8:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/mixin/rendertype/MixinRenderType_FixTerrainAlpha.java:10:@Mixin(RenderType.class)
+src/main/java/net/coderbot/iris/mixin/rendertype/MixinRenderType_FixTerrainAlpha.java:11:public class MixinRenderType_FixTerrainAlpha {
+src/main/java/net/coderbot/iris/mixin/rendertype/MixinRenderType_FixTerrainAlpha.java:12:	@Redirect(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;setAlphaState(Lnet/minecraft/client/renderer/RenderStateShard$AlphaStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;"))
+src/main/java/net/coderbot/iris/mixin/rendertype/MixinRenderType_FixTerrainAlpha.java:13:	private static RenderType.CompositeState.CompositeStateBuilder iris$tweakCutoutAlpha(RenderType.CompositeState.CompositeStateBuilder builder, RenderStateShard.AlphaStateShard alpha) {
+src/main/java/net/coderbot/iris/mixin/rendertype/RenderTypeAccessor.java:6:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/mixin/rendertype/RenderTypeAccessor.java:8:@Mixin(RenderType.class)
+src/main/java/net/coderbot/iris/mixin/rendertype/RenderTypeAccessor.java:9:public interface RenderTypeAccessor {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinTerrainParticle.java:10:import net.coderbot.iris.fantastic.IrisParticleRenderTypes;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinTerrainParticle.java:11:import net.minecraft.client.multiplayer.ClientLevel;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinTerrainParticle.java:12:import net.minecraft.client.particle.ParticleRenderType;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinTerrainParticle.java:14:import net.minecraft.client.renderer.ItemBlockRenderTypes;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinTerrainParticle.java:15:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinTerrainParticle.java:24:	private void iris$resolveTranslucency(ClientLevel level, double x, double y, double z, double velocityX, double velocityY, double velocityZ, BlockState blockState, CallbackInfo callback) {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinTerrainParticle.java:25:		RenderType type = ItemBlockRenderTypes.getChunkRenderType(blockState);
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinTerrainParticle.java:27:		if (type == RenderType.solid() || type == RenderType.cutout() || type == RenderType.cutoutMipped()) {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinTerrainParticle.java:32:	@Inject(method = "getRenderType", at = @At("HEAD"), cancellable = true)
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinTerrainParticle.java:33:	private void iris$overrideParticleRenderType(CallbackInfoReturnable<ParticleRenderType> cir) {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinTerrainParticle.java:35:			cir.setReturnValue(IrisParticleRenderTypes.OPAQUE_TERRAIN);
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinFireworkSparkParticle.java:5:import net.minecraft.client.multiplayer.ClientLevel;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinFireworkSparkParticle.java:6:import net.minecraft.client.particle.ParticleRenderType;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinFireworkSparkParticle.java:12:	private MixinFireworkSparkParticle(ClientLevel level, double x, double y, double z, SpriteSet spriteProvider, float upwardsAcceleration) {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinFireworkSparkParticle.java:17:	public ParticleRenderType getRenderType() {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinFireworkSparkParticle.java:18:		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinBarrierParticle.java:10:import net.coderbot.iris.fantastic.IrisParticleRenderTypes;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinBarrierParticle.java:11:import net.minecraft.client.multiplayer.ClientLevel;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinBarrierParticle.java:13:import net.minecraft.client.particle.ParticleRenderType;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinBarrierParticle.java:14:import net.minecraft.client.renderer.ItemBlockRenderTypes;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinBarrierParticle.java:15:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinBarrierParticle.java:25:	private void iris$resolveTranslucency(ClientLevel level, double x, double y, double z, ItemLike itemConvertible, CallbackInfo ci) {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinBarrierParticle.java:29:			RenderType type = ItemBlockRenderTypes.getChunkRenderType(blockItem.getBlock().defaultBlockState());
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinBarrierParticle.java:31:			if (type == RenderType.solid() || type == RenderType.cutout() || type == RenderType.cutoutMipped()) {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinBarrierParticle.java:37:	@Inject(method = "getRenderType", at = @At("HEAD"), cancellable = true)
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinBarrierParticle.java:38:	private void iris$overrideParticleRenderType(CallbackInfoReturnable<ParticleRenderType> cir) {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinBarrierParticle.java:40:			cir.setReturnValue(IrisParticleRenderTypes.OPAQUE_TERRAIN);
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinParticleEngine.java:5:import net.coderbot.iris.fantastic.IrisParticleRenderTypes;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinParticleEngine.java:10:import net.minecraft.client.particle.ParticleRenderType;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinParticleEngine.java:50:	private static final Set<ParticleRenderType> OPAQUE_PARTICLE_RENDER_TYPES;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinParticleEngine.java:54:				IrisParticleRenderTypes.OPAQUE_TERRAIN,
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinParticleEngine.java:55:				ParticleRenderType.PARTICLE_SHEET_OPAQUE,
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinParticleEngine.java:56:				ParticleRenderType.PARTICLE_SHEET_LIT,
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinParticleEngine.java:57:				ParticleRenderType.CUSTOM,
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinParticleEngine.java:58:				ParticleRenderType.NO_RENDER
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinParticleEngine.java:63:	private Set<ParticleRenderType> iris$selectParticlesToRender(Map<ParticleRenderType, Queue<Particle>> instance) {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinParticleEngine.java:64:		Set<ParticleRenderType> keySet = instance.keySet();
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinParticleEngine.java:71:			return Sets.filter(keySet, type -> !type.equals(ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT));
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinLevelRenderer.java:11:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinLevelRenderer.java:12:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinLevelRenderer.java:18:import net.minecraft.client.Camera;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinLevelRenderer.java:22:import net.minecraft.client.renderer.LevelRenderer;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinLevelRenderer.java:24:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinLevelRenderer.java:33:@Mixin(LevelRenderer.class)
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinLevelRenderer.java:34:public class MixinLevelRenderer {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinLevelRenderer.java:43:	private void iris$resetParticleManagerPhase(PoseStack poseStack, float f, long l, boolean bl, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinLevelRenderer.java:48:	private void iris$renderOpaqueParticles(PoseStack poseStack, float f, long l, boolean bl, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinLevelRenderer.java:51:		MultiBufferSource.BufferSource bufferSource = renderBuffers.bufferSource();
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinLevelRenderer.java:65:	@Redirect(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/ParticleEngine;renderParticles(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/culling/Frustum;)V"))
+src/main/java/net/coderbot/iris/mixin/fantastic/MixinLevelRenderer.java:66:	private void iris$renderTranslucentAfterDeferred(ParticleEngine instance, PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, LightTexture lightTexture, Camera camera, float f, Frustum frustum) {
+src/main/java/net/coderbot/iris/mixin/sky/MixinClientLevelData_DisableVoidPlane.java:26:public class MixinClientLevelData_DisableVoidPlane {
+src/main/java/net/coderbot/iris/mixin/sky/MixinLevelRenderer_SunMoonToggle.java:21:public class MixinLevelRenderer_SunMoonToggle {
+src/main/java/net/coderbot/iris/mixin/shadows/MixinPreventRebuildNearInShadowPass.java:6:import net.minecraft.client.renderer.culling.ICamera;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinPreventRebuildNearInShadowPass.java:40:	private void iris$preventRebuildNearInShadowPass(Entity viewEntity, double partialTicks, ICamera camera, int frameCount, boolean playerSpectator, CallbackInfo ci) {
+src/main/java/net/coderbot/iris/mixin/shadows/MixinPreventRebuildNearInShadowPass.java:56:	private void iris$cannotInject(Entity viewEntity, double partialTicks, ICamera camera, int frameCount, boolean playerSpectator, CallbackInfo ci) {
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:14:public class MixinLevelRenderer implements CullingDataCache {
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:46:	private double savedLastCameraX;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:49:	private double savedLastCameraY;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:52:	private double savedLastCameraZ;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:55:	private double savedLastCameraPitch;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:58:	private double savedLastCameraYaw;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:85:		frustumUpdatePosX = savedLastCameraX;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:86:		savedLastCameraX = tmp;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:89:		frustumUpdatePosY = savedLastCameraY;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:90:		savedLastCameraY = tmp;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:93:		frustumUpdatePosZ = savedLastCameraZ;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:94:		savedLastCameraZ = tmp;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:97:		lastViewEntityPitch = savedLastCameraPitch;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:98:		savedLastCameraPitch = tmp;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:101:		lastViewEntityYaw = savedLastCameraYaw;
+src/main/java/net/coderbot/iris/mixin/shadows/MixinLevelRenderer.java:102:		savedLastCameraYaw = tmp;
+src/main/java/net/coderbot/iris/mixin/MixinModelViewBobbing.java:14:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/mixin/MixinModelViewBobbing.java:15:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/mixin/MixinModelViewBobbing.java:42:					target = "Lnet/minecraft/client/renderer/GameRenderer;bobHurt(Lcom/mojang/blaze3d/vertex/PoseStack;F)V"))
+src/main/java/net/coderbot/iris/mixin/MixinModelViewBobbing.java:43:	private PoseStack iris$separateViewBobbing(PoseStack stack) {
+src/main/java/net/coderbot/iris/mixin/MixinModelViewBobbing.java:54:					target = "Lcom/mojang/blaze3d/vertex/PoseStack;last()Lcom/mojang/blaze3d/vertex/PoseStack$Pose;"),
+src/main/java/net/coderbot/iris/mixin/MixinModelViewBobbing.java:56:					       target = "Lnet/minecraft/client/renderer/GameRenderer;bobHurt(Lcom/mojang/blaze3d/vertex/PoseStack;F)V")))
+src/main/java/net/coderbot/iris/mixin/MixinModelViewBobbing.java:57:	private PoseStack.Pose iris$saveBobbing(PoseStack stack) {
+src/main/java/net/coderbot/iris/mixin/MixinModelViewBobbing.java:69:					target = "Lnet/minecraft/client/renderer/GameRenderer;resetProjectionMatrix(Lcom/mojang/math/Matrix4f;)V"))
+src/main/java/net/coderbot/iris/mixin/MixinModelViewBobbing.java:70:	private void iris$applyBobbingToModelView(float tickDelta, long limitTime, PoseStack matrix, CallbackInfo ci) {
+src/main/java/net/coderbot/iris/mixin/MixinEntityRenderDispatcher.java:16:public class MixinEntityRenderDispatcher {
+src/main/java/net/coderbot/iris/mixin/math/MixinMatrix4f.java:6:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/mixin/GameRendererAccessor.java:7:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/mixin/GameRendererAccessor.java:20:	void invokeBobView(PoseStack poseStack, float tickDelta);
+src/main/java/net/coderbot/iris/mixin/GameRendererAccessor.java:23:	void invokeBobHurt(PoseStack poseStack, float tickDelta);
+src/main/java/net/coderbot/iris/mixin/statelisteners/BooleanStateAccessor.java:6:@Mixin(targets = "com/mojang/blaze3d/platform/GlStateManager$BooleanState")
+src/main/java/net/coderbot/iris/mixin/MixinTweakFarPlane.java:47:	@Inject(method = "setupCameraTransform", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/EntityRenderer;farPlaneDistance:F", shift = At.Shift.AFTER))
+src/main/java/net/coderbot/iris/mixin/MixinTweakFarPlane.java:86:	@Redirect(method = "setupCameraTransform", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/EntityRenderer;farPlaneDistance:F", ordinal = 1))
+src/main/java/net/coderbot/iris/mixin/texture/TextureAtlasSpriteAccessor.java:8:import com.mojang.blaze3d.platform.NativeImage;
+src/main/java/net/coderbot/iris/mixin/texture/MixinTextureAtlasSprite.java:7:import com.mojang.blaze3d.platform.NativeImage;
+src/main/java/net/coderbot/iris/mixin/texture/MixinTextureAtlasSprite.java:16:	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/MipmapGenerator;generateMipLevels(Lcom/mojang/blaze3d/platform/NativeImage;I)[Lcom/mojang/blaze3d/platform/NativeImage;"))
+src/main/java/net/coderbot/iris/mixin/LevelRendererAccessor.java:12:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/mixin/LevelRendererAccessor.java:15:import net.minecraft.client.Camera;
+src/main/java/net/coderbot/iris/mixin/LevelRendererAccessor.java:16:import net.minecraft.client.multiplayer.ClientLevel;
+src/main/java/net/coderbot/iris/mixin/LevelRendererAccessor.java:17:import net.minecraft.client.renderer.LevelRenderer;
+src/main/java/net/coderbot/iris/mixin/LevelRendererAccessor.java:18:import net.minecraft.client.renderer.MultiBufferSource;
+src/main/java/net/coderbot/iris/mixin/LevelRendererAccessor.java:20:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/mixin/LevelRendererAccessor.java:22:import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+src/main/java/net/coderbot/iris/mixin/LevelRendererAccessor.java:26:public interface LevelRendererAccessor {
+src/main/java/net/coderbot/iris/mixin/LevelRendererAccessor.java:28:	RenderManager getEntityRenderDispatcher();
+src/main/java/net/coderbot/iris/mixin/LevelRendererAccessor.java:34:	void invokeSetupRender(Camera camera, Frustum frustum, boolean hasForcedFrustum, int frame, boolean spectator);
+src/main/java/net/coderbot/iris/mixin/LevelRendererAccessor.java:37:	void invokeRenderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta, PoseStack poseStack, MultiBufferSource bufferSource);
+src/main/java/net/coderbot/iris/mixin/MixinItemBlockRenderTypes.java:15:public class MixinItemBlockRenderTypes {
+src/main/java/net/coderbot/iris/mixin/MixinItemBlockRenderTypes.java:17:	private void iris$setCustomRenderType(CallbackInfoReturnable<BlockRenderLayer> cir) {
+src/main/java/net/coderbot/iris/mixin/MixinEntityRenderer.java:13:import net.minecraft.client.renderer.culling.ICamera;
+src/main/java/net/coderbot/iris/mixin/MixinEntityRenderer.java:67:    @Inject(method = "renderWorldPass", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderGlobal;setupTerrain(Lnet/minecraft/entity/Entity;DLnet/minecraft/client/renderer/culling/ICamera;IZ)V"))
+src/main/java/net/coderbot/iris/mixin/MixinEntityRenderer.java:68:    private void iris$renderTerrainShadows(int pass, float partialTicks, long finishTimeNano, CallbackInfo ci, @Local ICamera icamera) {
+src/main/java/net/coderbot/iris/mixin/MixinEntityRenderer.java:69:        ((RenderGlobalExtended) this.mc.renderGlobal).getPipeline().renderShadows((LevelRendererAccessor) this, icamera);
+src/main/java/net/coderbot/iris/mixin/MixinEntityRenderer.java:73:            slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/culling/ICamera;setPosition(DDD)V")))
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:17:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:18:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:19:import com.mojang.math.Vector3f;
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:24:import net.coderbot.iris.layer.OuterWrappedRenderType;
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:30:import net.minecraft.client.Camera;
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:34:import net.minecraft.client.renderer.LevelRenderer;
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:37:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:41:public class MixinLevelRenderer implements RenderGlobalExtended {
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:42:	private static final String RENDER_WEATHER = "Lnet/minecraft/client/renderer/LevelRenderer;renderSnowAndRain(Lnet/minecraft/client/renderer/LightTexture;FDDD)V";
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:48:	private void iris$beginSky(PoseStack poseStack, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f projection, CallbackInfo callback) {
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:86:	@Inject(method = "renderSky(FI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getTimeOfDay(F)F"),
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:87:		slice = @Slice(from = @At(value = "FIELD", target = "com/mojang/math/Vector3f.YP : Lcom/mojang/math/Vector3f;")))
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:94:		pipeline.setPhase(WorldRenderingPhase.fromTerrainRenderType(renderLayer));
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:102:	@ModifyArg(method = RENDER_WEATHER, at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;depthMask(Z)V", ordinal = 0))
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:112:		at = @At(value = "INVOKE", target = "net/minecraft/client/renderer/MultiBufferSource$BufferSource.getBuffer (Lnet/minecraft/client/renderer/RenderType;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"),
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:115:			to = @At(value = "INVOKE", target = "net/minecraft/client/renderer/LevelRenderer.renderHitOutline (Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/entity/Entity;DDDLnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V")
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:117:	private RenderType iris$beginBlockOutline(RenderType type) {
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:118:		return OuterWrappedRenderType.wrapExactlyOnce("iris:is_outline", type, IsOutlineRenderStateShard.INSTANCE);
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:122:	private void iris$beginTranslucents(PoseStack poseStack, float tickDelta, long limitTime,
+src/main/java/net/coderbot/iris/mixin/MixinLevelRenderer.java:123:										boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer,
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:12: * @see <a href="https://github.com/IrisShaders/ShaderDoc/blob/master/uniforms.md#camera">Uniforms: Camera</a>
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:14:public class CameraUniforms {
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:17:	private CameraUniforms() {
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:20:	public static void addCameraUniforms(UniformHolder uniforms, FrameUpdateNotifier notifier) {
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:21:		CameraPositionTracker tracker = new CameraPositionTracker(notifier);
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:25:			.uniform1f(PER_FRAME, "far", CameraUniforms::getRenderDistanceInBlocks)
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:26:			.uniform3d(PER_FRAME, "cameraPosition", tracker::getCurrentCameraPosition)
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:27:			.uniform1f(PER_FRAME, "eyeAltitude", tracker::getCurrentCameraPositionY)
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:28:			.uniform3d(PER_FRAME, "previousCameraPosition", tracker::getPreviousCameraPosition);
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:36:	public static Vector3d getUnshiftedCameraPosition() {
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:37:		return JomlConversions.fromVec3(client.gameRenderer.getMainCamera().getPosition());
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:40:	static class CameraPositionTracker {
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:50:		private Vector3d previousCameraPosition = new Vector3d();
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:51:		private Vector3d currentCameraPosition = new Vector3d();
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:54:		CameraPositionTracker(FrameUpdateNotifier notifier) {
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:59:			previousCameraPosition = currentCameraPosition;
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:60:			currentCameraPosition = getUnshiftedCameraPosition().add(shift);
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:71:			double dX = getShift(currentCameraPosition.x, previousCameraPosition.x);
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:72:			double dZ = getShift(currentCameraPosition.z, previousCameraPosition.z);
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:90:		 * between cameraPosition and previousCameraPosition remains the same, since they are completely arbitrary
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:95:			currentCameraPosition.x += dX;
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:96:			previousCameraPosition.x += dX;
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:99:			currentCameraPosition.z += dZ;
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:100:			previousCameraPosition.z += dZ;
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:103:		public Vector3d getCurrentCameraPosition() {
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:104:			return currentCameraPosition;
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:107:		public Vector3d getPreviousCameraPosition() {
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:108:			return previousCameraPosition;
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:111:		public double getCurrentCameraPositionY() {
+src/main/java/net/coderbot/iris/uniforms/CameraUniforms.java:112:			return currentCameraPosition.y;
+src/main/java/net/coderbot/iris/uniforms/IrisExclusiveUniforms.java:32:		uniforms.uniform1b(UniformUpdateFrequency.PER_FRAME, "firstPersonCamera", IrisExclusiveUniforms::isFirstPersonCamera);
+src/main/java/net/coderbot/iris/uniforms/IrisExclusiveUniforms.java:35:		uniforms.uniform3d(UniformUpdateFrequency.PER_FRAME, "relativeEyePosition", () -> CameraUniforms.getUnshiftedCameraPosition().sub(getEyePosition()));
+src/main/java/net/coderbot/iris/uniforms/IrisExclusiveUniforms.java:42:					Vector3d unshiftedCameraPosition = CameraUniforms.getUnshiftedCameraPosition();
+src/main/java/net/coderbot/iris/uniforms/IrisExclusiveUniforms.java:44:					return new Vector4f((float) (vec3.x - unshiftedCameraPosition.x), (float) (vec3.y - unshiftedCameraPosition.y), (float) (vec3.z - unshiftedCameraPosition.z), 1);
+src/main/java/net/coderbot/iris/uniforms/IrisExclusiveUniforms.java:98:	private static boolean isFirstPersonCamera() {
+src/main/java/net/coderbot/iris/uniforms/CapturedRenderingState.java:3:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/uniforms/CommonUniforms.java:9:import com.mojang.blaze3d.platform.GlStateManager;
+src/main/java/net/coderbot/iris/uniforms/CommonUniforms.java:70:		CameraUniforms.addCameraUniforms(uniforms, updateNotifier);
+src/main/java/net/coderbot/iris/uniforms/ExternallyManagedUniforms.java:38:		uniformHolder.externallyManagedUniform("iris_CameraTranslation", UniformType.VEC3);
+src/main/java/net/coderbot/iris/uniforms/CelestialUniforms.java:7:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/uniforms/CelestialUniforms.java:8:import com.mojang.math.Vector3f;
+src/main/java/net/coderbot/iris/uniforms/CelestialUniforms.java:14:import net.minecraft.client.multiplayer.ClientLevel;
+src/main/java/net/coderbot/iris/uniforms/CelestialUniforms.java:74:		com.mojang.math.Vector4f position = new com.mojang.math.Vector4f(0.0F, y, 0.0F, 0.0F);
+src/main/java/net/coderbot/iris/uniforms/CelestialUniforms.java:92:		com.mojang.math.Vector4f position = new com.mojang.math.Vector4f(0.0F, y, 0.0F, 0.0F);
+src/main/java/net/coderbot/iris/uniforms/HardcodedCustomUniforms.java:33:		CameraUniforms.CameraPositionTracker tracker = new CameraUniforms.CameraPositionTracker(updateNotifier);
+src/main/java/net/coderbot/iris/uniforms/HardcodedCustomUniforms.java:82:		holder.uniform1f(UniformUpdateFrequency.PER_FRAME, "isPrecipitationRain", new SmoothedFloat(6, 6, () -> (getRawPrecipitation() == 1 && tracker.getCurrentCameraPosition().y < 96.0f) ? 1 : 0, updateNotifier));
+src/main/java/net/coderbot/iris/uniforms/HardcodedCustomUniforms.java:134:	private static float getVelocity(CameraUniforms.CameraPositionTracker tracker) {
+src/main/java/net/coderbot/iris/uniforms/HardcodedCustomUniforms.java:135:		float difX = (float) (tracker.getCurrentCameraPosition().x - tracker.getPreviousCameraPosition().x);
+src/main/java/net/coderbot/iris/uniforms/HardcodedCustomUniforms.java:136:		float difY = (float) (tracker.getCurrentCameraPosition().y - tracker.getPreviousCameraPosition().y);
+src/main/java/net/coderbot/iris/uniforms/HardcodedCustomUniforms.java:137:		float difZ = (float) (tracker.getCurrentCameraPosition().z - tracker.getPreviousCameraPosition().z);
+src/main/java/net/coderbot/iris/uniforms/HardcodedCustomUniforms.java:141:	private static SmoothedFloat getStarter(CameraUniforms.CameraPositionTracker tracker, FrameUpdateNotifier notifier) {
+src/main/java/net/coderbot/iris/uniforms/HardcodedCustomUniforms.java:145:	private static float getMoving(CameraUniforms.CameraPositionTracker tracker) {
+src/main/java/net/coderbot/iris/uniforms/HardcodedCustomUniforms.java:146:		float difX = (float) (tracker.getCurrentCameraPosition().x - tracker.getPreviousCameraPosition().x);
+src/main/java/net/coderbot/iris/uniforms/HardcodedCustomUniforms.java:147:		float difY = (float) (tracker.getCurrentCameraPosition().y - tracker.getPreviousCameraPosition().y);
+src/main/java/net/coderbot/iris/uniforms/HardcodedCustomUniforms.java:148:		float difZ = (float) (tracker.getCurrentCameraPosition().z - tracker.getPreviousCameraPosition().z);
+src/main/java/net/coderbot/iris/uniforms/builtin/BuiltinReplacementUniforms.java:3:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:8:import net.coderbot.batchedentityrendering.impl.WrappableRenderType;
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:9:import net.coderbot.iris.mixin.rendertype.RenderTypeAccessor;
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:11:import net.minecraft.client.renderer.RenderType;
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:15:public class OuterWrappedRenderType extends RenderType implements WrappableRenderType {
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:17:	private final RenderType wrapped;
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:19:	private OuterWrappedRenderType(String name, RenderType wrapped, RenderStateShard extra) {
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:27:	public static OuterWrappedRenderType wrapExactlyOnce(String name, RenderType wrapped, RenderStateShard extra) {
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:28:		if (wrapped instanceof OuterWrappedRenderType) {
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:29:			wrapped = ((OuterWrappedRenderType) wrapped).unwrap();
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:32:		return new OuterWrappedRenderType(name, wrapped, extra);
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:50:	public RenderType unwrap() {
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:55:	public Optional<RenderType> outline() {
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:74:		OuterWrappedRenderType other = (OuterWrappedRenderType) object;
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:91:	private static boolean shouldSortOnUpload(RenderType type) {
+src/main/java/net/coderbot/iris/layer/OuterWrappedRenderType.java:92:		return ((RenderTypeAccessor) type).shouldSortOnUpload();
+src/main/java/net/coderbot/iris/shaderpack/IdMap.java:24:import net.coderbot.iris.shaderpack.materialmap.BlockRenderType;
+src/main/java/net/coderbot/iris/shaderpack/IdMap.java:51:	private Map<NamespacedId, BlockRenderType> blockRenderTypeMap;
+src/main/java/net/coderbot/iris/shaderpack/IdMap.java:62:			blockRenderTypeMap = parseRenderTypeMap(blockProperties, "layer.", "block.properties");
+src/main/java/net/coderbot/iris/shaderpack/IdMap.java:73:		if (blockRenderTypeMap == null) {
+src/main/java/net/coderbot/iris/shaderpack/IdMap.java:74:			blockRenderTypeMap = Collections.emptyMap();
+src/main/java/net/coderbot/iris/shaderpack/IdMap.java:221:	private static Map<NamespacedId, BlockRenderType> parseRenderTypeMap(Properties properties, String keyPrefix, String fileName) {
+src/main/java/net/coderbot/iris/shaderpack/IdMap.java:222:		Map<NamespacedId, BlockRenderType> overrides = new HashMap<>();
+src/main/java/net/coderbot/iris/shaderpack/IdMap.java:236:			BlockRenderType renderType = BlockRenderType.fromString(keyWithoutPrefix).orElse(null);
+src/main/java/net/coderbot/iris/shaderpack/IdMap.java:287:	public Map<NamespacedId, BlockRenderType> getBlockRenderTypeMap() {
+src/main/java/net/coderbot/iris/shaderpack/IdMap.java:288:		return blockRenderTypeMap;
+src/main/java/net/coderbot/iris/shaderpack/IdMap.java:306:				&& Objects.equals(blockRenderTypeMap, idMap.blockRenderTypeMap);
+src/main/java/net/coderbot/iris/shaderpack/IdMap.java:311:		return Objects.hash(itemIdMap, entityIdMap, blockPropertiesMap, blockRenderTypeMap);
+src/main/java/net/coderbot/iris/shaderpack/materialmap/BlockRenderType.java:11:public enum BlockRenderType {
+src/main/java/net/coderbot/iris/shaderpack/materialmap/BlockRenderType.java:32:	public static Optional<BlockRenderType> fromString(String name) {
+src/main/java/net/coderbot/iris/gui/GuiUtil.java:3:import com.mojang.blaze3d.systems.RenderSystem;
+src/main/java/net/coderbot/iris/gui/GuiUtil.java:4:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/gui/element/widget/BaseOptionElementWidget.java:10:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/gui/element/widget/LinkElementWidget.java:8:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/gui/element/widget/SliderElementWidget.java:8:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/gui/element/widget/StringElementWidget.java:5:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/gui/element/widget/ProfileElementWidget.java:5:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/gui/element/widget/BooleanElementWidget.java:3:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/gui/element/ShaderPackSelectionList.java:6:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/gui/element/ShaderPackSelectionList.java:163:		public void render(PoseStack poseStack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+src/main/java/net/coderbot/iris/gui/element/ShaderPackSelectionList.java:227:		public void render(PoseStack poseStack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+src/main/java/net/coderbot/iris/gui/element/ShaderPackSelectionList.java:279:		public void render(PoseStack poseStack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+src/main/java/net/coderbot/iris/gui/element/ShaderPackSelectionList.java:310:			public void renderLabel(PoseStack poseStack, int x, int y, int width, int height, int mouseX, int mouseY, float tickDelta, boolean hovered) {
+src/main/java/net/coderbot/iris/gui/FeatureMissingErrorScreen.java:3:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/gui/screen/ShaderPackScreen.java:27:import com.mojang.blaze3d.vertex.PoseStack;
+src/main/java/net/coderbot/iris/gl/uniform/LocationalUniformHolder.java:9:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/gl/uniform/LocationalUniformHolder.java:79:	default LocationalUniformHolder uniformVanilla3f(UniformUpdateFrequency updateFrequency, String name, Supplier<com.mojang.math.Vector3f> value) {
+src/main/java/net/coderbot/iris/gl/uniform/VanillaVector3Uniform.java:5:import com.mojang.math.Vector3f;
+src/main/java/net/coderbot/iris/gl/uniform/UniformHolder.java:8:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/gl/uniform/UniformHolder.java:33:	UniformHolder uniformVanilla3f(UniformUpdateFrequency updateFrequency, String name, Supplier<com.mojang.math.Vector3f> value);
+src/main/java/net/coderbot/iris/gl/uniform/MatrixUniform.java:8:import com.mojang.math.Matrix4f;
+src/main/java/net/coderbot/iris/gl/IrisRenderSystem.java:18:import com.mojang.blaze3d.platform.GlStateManager;
+src/main/java/net/coderbot/iris/gl/IrisRenderSystem.java:19:import com.mojang.blaze3d.systems.RenderSystem;
+src/main/java/net/coderbot/iris/gl/program/ProgramSamplers.java:49:		// in the middle of RenderType setup, bad things will happen.
+src/main/java/net/coderbot/iris/gl/blending/DepthColorStorage.java:3:import com.mojang.blaze3d.platform.GlStateManager;
+src/main/java/net/coderbot/iris/gl/blending/BlendModeStorage.java:3:import com.mojang.blaze3d.platform.GlStateManager;
+src/main/java/net/coderbot/iris/vendored/joml/Matrix4f.java:10608:     * See: <a href="https://en.wikipedia.org/wiki/Camera_resectioning#Intrinsic_parameters">https://en.wikipedia.org/</a>
+src/main/java/net/coderbot/iris/vendored/joml/Matrix4d.java:13606:     * See: <a href="https://en.wikipedia.org/wiki/Camera_resectioning#Intrinsic_parameters">https://en.wikipedia.org/</a>
+src/main/java/net/coderbot/iris/block_rendering/BlockMaterialMapping.java:9:import net.coderbot.iris.shaderpack.materialmap.BlockRenderType;
+src/main/java/net/coderbot/iris/block_rendering/BlockMaterialMapping.java:38:	public static Map<IRegistryDelegate<Block>, BlockRenderLayer> createBlockTypeMap(Map<NamespacedId, BlockRenderType> blockPropertiesMap) {
+src/main/java/net/coderbot/iris/block_rendering/BlockMaterialMapping.java:50:			blockTypeIds.put(block.delegate, convertBlockToRenderType(blockType));
+src/main/java/net/coderbot/iris/block_rendering/BlockMaterialMapping.java:56:	private static BlockRenderLayer convertBlockToRenderType(BlockRenderType type) {
+src/main/java/net/coderbot/iris/rendertarget/NoiseTexture.java:13:import com.mojang.blaze3d.platform.GlStateManager;
+src/main/java/net/coderbot/iris/rendertarget/RenderTarget.java:11:import com.mojang.blaze3d.platform.GlStateManager;
