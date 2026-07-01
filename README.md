@@ -2,38 +2,126 @@
   <img src="banner.png">
 </p>
 
-# Oculus
-[![](http://cf.way2muchnoise.eu/short_oculus_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/oculus)
-[![](http://cf.way2muchnoise.eu/versions/Available%20for_oculus_full.svg)](https://www.curseforge.com/minecraft/mc-mods/oculus/files)
+# Spectra
 
-Oculus is an Unofficial Fork of ["Iris"](https://www.curseforge.com/minecraft/mc-mods/irisshaders), made to work with Forge Mod Loader.
+Spectra is an experimental backport of the Iris/Oculus shader system for **Minecraft Forge 1.12.2**.
+
+The goal of Spectra is to bring modern shader support to legacy Forge modpacks while maintaining compatibility with the Minecraft 1.12.2 modding ecosystem.
+
+> ⚠️ Spectra is currently in **Alpha** and under active development.
+
+---
 
 ## Disclaimer
-Oculus is not and never will be compatible with Optifine!
+
+- Spectra is **not** compatible with OptiFine.
+- This project is based on the work of the **Iris** and **Oculus** developers.
+- Expect bugs and unfinished features.
+
+---
 
 ## Dependencies
-Oculus requires [Rubidium](https://www.curseforge.com/minecraft/mc-mods/rubidium) made by Asek3!
+
+Required:
+
+- Minecraft Forge 1.12.2
+- Vintagium
+- MixinBooter
+
+Temporary runtime dependency:
+
+- Apache Commons Collections 4.4 (PatriciaTrie fix)
+
+---
 
 ## Features
-* Performance. Oculus should fully utilize your graphics card when paired with optimization mods like Rubidium.
 
-* Mod compatibility. Oculus should make a best effort to be compatible with modded environments.
+- Modern Iris/Oculus rendering pipeline backported to Minecraft 1.12.2
+- ShaderPack loading
+- Designed for Forge modpacks
+- Based on the Oculus codebase
+- Open-source
 
-* Backwards compatibility. All existing ShadersMod / OptiFine shader packs should just work on Oculus, without any modifications required.
+---
 
-* A well-organized codebase. I'd like for working with Oculus code to be a pleasant experience overall.
+## Fixed
 
-## Discord
-[![](https://dcbadge.vercel.app/api/server/UCsyn5RS4s)](https://discord.gg/UCsyn5RS4s)
+✔ Initial Iris/Oculus backport to Minecraft 1.12.2
 
-## Contributors
-<a href="https://github.com/Asek3/Oculus/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Asek3/Oculus" />
-</a>
+✔ Fixed multiple compilation issues
+
+✔ Fixed missing `PatriciaTrie` crash
+
+✔ Fixed numerous dependency issues
+
+✔ Shader pipeline initializes correctly
+
+✔ ShaderPack loading implemented
+
+✔ General compatibility improvements
+
+---
+
+## Known Issues
+
+- Shader selection GUI is not finished
+- Some shaderpacks may fail to initialize
+- Apple Silicon / macOS OpenGL compatibility is incomplete
+- Windows and Linux require further testing
+- Additional compatibility fixes are still needed
+
+---
+
+## OS Support
+
+| Operating System | Status |
+|-----------------|--------|
+| Windows | 🟡 Experimental |
+| Linux | 🟡 Experimental |
+| macOS Intel | 🟡 Untested |
+| macOS Apple Silicon | 🔴 Broken (OpenGL limitations) |
+
+---
+
+## Installation
+
+1. Install Minecraft Forge 1.12.2
+2. Install Vintagium
+3. Install MixinBooter
+4. Place Spectra into your `mods` folder
+5. Launch Minecraft
+
+---
+
+## Building
+
+```bash
+./gradlew clean build
+```
+
+The compiled JAR will be located in:
+
+```text
+build/libs/
+```
+
+---
+
+## Credits
+
+- Iris Shaders Team
+- Oculus
+- Asek3
+- Coderbot
+- Minecraft Forge
+- SpongePowered Mixin
+
+Special thanks to everyone who contributed to the original Iris and Oculus projects.
+
+---
 
 ## License
 
-[LGPL-3.0 license](https://github.com/Asek3/Oculus/blob/1.16.5/LICENSE)
+Spectra is based on Oculus and Iris.
 
-## Consider supporting 
-[![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dasek3%26type%3Dpatrons&style=for-the-badge)](https://patreon.com/asek3)
+Please respect the original project license and the work of its contributors.
