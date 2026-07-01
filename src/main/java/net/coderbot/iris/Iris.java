@@ -72,6 +72,15 @@ public class Iris {
             final net.minecraft.client.gui.GuiScreen parent = event.getGui();
             net.minecraft.client.Minecraft.getMinecraft().displayGuiScreen(new ShaderPackScreen(parent));
         }
+
+        @net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+        public static void onRenderOverlay(net.minecraftforge.client.event.RenderGameOverlayEvent.Post event) {
+            if (event.getType() != net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.ALL) {
+                return;
+            }
+
+            SpectraShaderManager.renderTestOverlay();
+        }
     }
 
     public static class ShaderPackScreen extends net.minecraft.client.gui.GuiScreen {
@@ -321,6 +330,8 @@ public class Iris {
         private static String activeShaderPack = "OFF";
         private static boolean shaderPackLoaded = false;
         private static int lastCompileTestProgram = 0;
+        private static int overlayTestProgram = 0;
+        private static boolean renderTestLogged = false;
 
         public static void loadSelectedShaderPack(String shaderPackName) {
             activeShaderPack = shaderPackName == null || shaderPackName.trim().isEmpty()
@@ -595,6 +606,76 @@ public class Iris {
             return shader;
         }
 
+        private static int getOrCreateOverlayTestProgram() {
+            if (overlayTestProgram != 0) {
+                return overlayTestProgram;
+            }
+
+            String vertexSource = "#version 120\n" +
+                    "void main() {\n" +
+                    "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n" +
+                    "}\n";
+
+            String fragmentSource = "#version 120\n" +
+                    "void main() {\n" +
+                    "    gl_FragColor = vec4(1.0, 0.0, 1.0, 0.75);\n" +
+                    "}\n";
+
+            int vertexShader = 0;
+            int fragmentShader = 0;
+            int program = 0;
+
+            try {
+                vertexShader = compileShader(org.lwjgl.opengl.GL20.GL_VERTEX_SHADER, "spectra_overlay_test.vsh", vertexSource);
+                if (vertexShader == 0) {
+                    return 0;
+                }
+
+                fragmentShader = compileShader(org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER, "spectra_overlay_test.fsh", fragmentSource);
+                if (fragmentShader == 0) {
+                    return 0;
+                }
+
+                program = org.lwjgl.opengl.GL20.glCreateProgram();
+                org.lwjgl.opengl.GL20.glAttachShader(program, vertexShader);
+                org.lwjgl.opengl.GL20.glAttachShader(program, fragmentShader);
+                org.lwjgl.opengl.GL20.glLinkProgram(program);
+
+                int linked = org.lwjgl.opengl.GL20.glGetProgrami(program, org.lwjgl.opengl.GL20.GL_LINK_STATUS);
+                String linkLog = org.lwjgl.opengl.GL20.glGetProgramInfoLog(program, 8192);
+
+                if (linked == org.lwjgl.opengl.GL11.GL_FALSE) {
+                    System.out.println("[Spectra/Oculus] Overlay test program link FAILED");
+                    if (linkLog != null && !linkLog.trim().isEmpty()) {
+                        System.out.println("[Spectra/Oculus] Overlay test link log: " + linkLog.trim());
+                    }
+                    org.lwjgl.opengl.GL20.glDeleteProgram(program);
+                    return 0;
+                }
+
+                overlayTestProgram = program;
+                program = 0;
+                System.out.println("[Spectra/Oculus] Overlay test program linked successfully id=" + overlayTestProgram);
+                return overlayTestProgram;
+            } catch (Throwable t) {
+                System.out.println("[Spectra/Oculus] Overlay test program compile crashed");
+                t.printStackTrace();
+                return 0;
+            } finally {
+                if (program != 0) {
+                    org.lwjgl.opengl.GL20.glDeleteProgram(program);
+                }
+
+                if (vertexShader != 0) {
+                    org.lwjgl.opengl.GL20.glDeleteShader(vertexShader);
+                }
+
+                if (fragmentShader != 0) {
+                    org.lwjgl.opengl.GL20.glDeleteShader(fragmentShader);
+                }
+            }
+        }
+
         private static String readShaderSourceWithIncludes(java.io.File shaderPack, String path) {
             String source = readShaderSource(shaderPack, path);
 
@@ -770,6 +851,93 @@ public class Iris {
 
         public static boolean isShaderPackLoaded() {
             return shaderPackLoaded;
+        }
+
+        public static void renderTestOverlay() {
+            if (!shaderPackLoaded) {
+                return;
+            }
+
+            int programToUse = getOrCreateOverlayTestProgram();
+            if (programToUse == 0) {
+                return;
+            }
+
+            net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getMinecraft();
+
+            if (minecraft.currentScreen != null) {
+                return;
+            }
+
+            if (!renderTestLogged) {
+                renderTestLogged = true;
+                System.out.println("[Spectra/Oculus] Render test overlay is running with program id=" + programToUse);
+            }
+
+            int previousProgram = org.lwjgl.opengl.GL11.glGetInteger(org.lwjgl.opengl.GL20.GL_CURRENT_PROGRAM);
+            int previousTexture = org.lwjgl.opengl.GL11.glGetInteger(org.lwjgl.opengl.GL11.GL_TEXTURE_BINDING_2D);
+            int previousMatrixMode = org.lwjgl.opengl.GL11.glGetInteger(org.lwjgl.opengl.GL11.GL_MATRIX_MODE);
+
+            org.lwjgl.opengl.GL11.glPushAttrib(org.lwjgl.opengl.GL11.GL_ALL_ATTRIB_BITS);
+
+            try {
+                org.lwjgl.opengl.GL11.glDisable(org.lwjgl.opengl.GL11.GL_DEPTH_TEST);
+                org.lwjgl.opengl.GL11.glDisable(org.lwjgl.opengl.GL11.GL_TEXTURE_2D);
+                org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL11.GL_BLEND);
+                org.lwjgl.opengl.GL11.glBlendFunc(org.lwjgl.opengl.GL11.GL_SRC_ALPHA, org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA);
+                org.lwjgl.opengl.GL11.glDepthMask(false);
+
+                net.minecraft.client.gui.ScaledResolution scaledResolution = new net.minecraft.client.gui.ScaledResolution(minecraft);
+                float width = scaledResolution.getScaledWidth();
+                float height = scaledResolution.getScaledHeight();
+
+                org.lwjgl.opengl.GL11.glMatrixMode(org.lwjgl.opengl.GL11.GL_PROJECTION);
+                org.lwjgl.opengl.GL11.glPushMatrix();
+                org.lwjgl.opengl.GL11.glLoadIdentity();
+                org.lwjgl.opengl.GL11.glOrtho(0.0D, width, height, 0.0D, -1.0D, 1.0D);
+
+                org.lwjgl.opengl.GL11.glMatrixMode(org.lwjgl.opengl.GL11.GL_MODELVIEW);
+                org.lwjgl.opengl.GL11.glPushMatrix();
+                org.lwjgl.opengl.GL11.glLoadIdentity();
+
+                org.lwjgl.opengl.GL20.glUseProgram(programToUse);
+                org.lwjgl.opengl.GL11.glBegin(org.lwjgl.opengl.GL11.GL_QUADS);
+                org.lwjgl.opengl.GL11.glVertex2f(10.0F, 10.0F);
+                org.lwjgl.opengl.GL11.glVertex2f(210.0F, 10.0F);
+                org.lwjgl.opengl.GL11.glVertex2f(210.0F, 110.0F);
+                org.lwjgl.opengl.GL11.glVertex2f(10.0F, 110.0F);
+                org.lwjgl.opengl.GL11.glEnd();
+                org.lwjgl.opengl.GL20.glUseProgram(0);
+
+                org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL11.GL_TEXTURE_2D);
+                org.lwjgl.opengl.GL11.glBindTexture(org.lwjgl.opengl.GL11.GL_TEXTURE_2D, previousTexture);
+                org.lwjgl.opengl.GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+                net.minecraft.client.gui.Gui.drawRect(14, 14, 206, 106, 0xFFFF00FF);
+                minecraft.fontRenderer.drawStringWithShadow("Spectra render hook", 20, 20, 0xFFFFFF);
+            } catch (Throwable t) {
+                System.out.println("[Spectra/Oculus] Render test overlay crashed; disabling compiled shader program");
+                t.printStackTrace();
+
+                if (overlayTestProgram != 0) {
+                    org.lwjgl.opengl.GL20.glDeleteProgram(overlayTestProgram);
+                    overlayTestProgram = 0;
+                }
+            } finally {
+                org.lwjgl.opengl.GL20.glUseProgram(previousProgram);
+                org.lwjgl.opengl.GL11.glBindTexture(org.lwjgl.opengl.GL11.GL_TEXTURE_2D, previousTexture);
+                org.lwjgl.opengl.GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                org.lwjgl.opengl.GL11.glDepthMask(true);
+
+                org.lwjgl.opengl.GL11.glMatrixMode(org.lwjgl.opengl.GL11.GL_MODELVIEW);
+                org.lwjgl.opengl.GL11.glPopMatrix();
+
+                org.lwjgl.opengl.GL11.glMatrixMode(org.lwjgl.opengl.GL11.GL_PROJECTION);
+                org.lwjgl.opengl.GL11.glPopMatrix();
+
+                org.lwjgl.opengl.GL11.glMatrixMode(previousMatrixMode);
+                org.lwjgl.opengl.GL11.glPopAttrib();
+            }
         }
     }
 
