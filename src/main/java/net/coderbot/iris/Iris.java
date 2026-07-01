@@ -320,6 +320,7 @@ public class Iris {
     public static class SpectraShaderManager {
         private static String activeShaderPack = "OFF";
         private static boolean shaderPackLoaded = false;
+        private static int lastCompileTestProgram = 0;
 
         public static void loadSelectedShaderPack(String shaderPackName) {
             activeShaderPack = shaderPackName == null || shaderPackName.trim().isEmpty()
@@ -371,7 +372,7 @@ public class Iris {
             java.util.List<String> shaderFiles = new java.util.ArrayList<>();
             collectShaderFilesFromDirectory(shadersFolder, shaderFiles, shadersFolder.getAbsolutePath().length() + 1);
 
-            finishShaderPackLoad(shaderFiles);
+            finishShaderPackLoad(shaderPack, shaderFiles);
         }
 
         private static void collectShaderFilesFromDirectory(java.io.File folder, java.util.List<String> shaderFiles, int prefixLength) {
@@ -431,10 +432,10 @@ public class Iris {
                 return;
             }
 
-            finishShaderPackLoad(shaderFiles);
+            finishShaderPackLoad(shaderPack, shaderFiles);
         }
 
-        private static void finishShaderPackLoad(java.util.List<String> shaderFiles) {
+        private static void finishShaderPackLoad(java.io.File shaderPack, java.util.List<String> shaderFiles) {
             if (shaderFiles.isEmpty()) {
                 System.out.println("[Spectra/Oculus] Shaderpack has shaders/ folder, but no .vsh/.fsh/.glsl files were found");
                 return;
@@ -454,6 +455,313 @@ public class Iris {
             }
 
             System.out.println("[Spectra/Oculus] NOTE: shaderpack is selected and parsed, but real GLSL rendering is not implemented yet");
+            compileFirstAvailableProgram(shaderPack, shaderFiles);
+        }
+
+        private static void compileFirstAvailableProgram(java.io.File shaderPack, java.util.List<String> shaderFiles) {
+            String[] preferredPrograms = new String[] {
+                    "gbuffers_basic",
+                    "gbuffers_textured",
+                    "gbuffers_terrain",
+                    "composite",
+                    "final"
+            };
+
+            for (String programName : preferredPrograms) {
+                String vertexPath = "shaders/" + programName + ".vsh";
+                String fragmentPath = "shaders/" + programName + ".fsh";
+
+                if (shaderFiles.contains(vertexPath) && shaderFiles.contains(fragmentPath)) {
+                    compileTestProgram(shaderPack, programName, vertexPath, fragmentPath);
+                    return;
+                }
+            }
+
+            for (String file : shaderFiles) {
+                if (!file.toLowerCase(java.util.Locale.ROOT).endsWith(".vsh")) {
+                    continue;
+                }
+
+                String base = file.substring(0, file.length() - 4);
+                String fragmentPath = base + ".fsh";
+
+                if (shaderFiles.contains(fragmentPath)) {
+                    String programName = base.startsWith("shaders/") ? base.substring("shaders/".length()) : base;
+                    compileTestProgram(shaderPack, programName, file, fragmentPath);
+                    return;
+                }
+            }
+
+            System.out.println("[Spectra/Oculus] No matching .vsh/.fsh shader pair found for compile test");
+        }
+
+        private static void compileTestProgram(java.io.File shaderPack, String programName, String vertexPath, String fragmentPath) {
+            System.out.println("[Spectra/Oculus] Compile test program: " + programName);
+
+            String vertexSource = readShaderSourceWithIncludes(shaderPack, vertexPath);
+            String fragmentSource = readShaderSourceWithIncludes(shaderPack, fragmentPath);
+
+            if (vertexSource == null) {
+                System.out.println("[Spectra/Oculus] Missing vertex shader source: " + vertexPath);
+                return;
+            }
+
+            if (fragmentSource == null) {
+                System.out.println("[Spectra/Oculus] Missing fragment shader source: " + fragmentPath);
+                return;
+            }
+
+            int vertexShader = 0;
+            int fragmentShader = 0;
+            int program = 0;
+
+            try {
+                vertexShader = compileShader(org.lwjgl.opengl.GL20.GL_VERTEX_SHADER, vertexPath, vertexSource);
+                if (vertexShader == 0) {
+                    return;
+                }
+
+                fragmentShader = compileShader(org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER, fragmentPath, fragmentSource);
+                if (fragmentShader == 0) {
+                    return;
+                }
+
+                program = org.lwjgl.opengl.GL20.glCreateProgram();
+                org.lwjgl.opengl.GL20.glAttachShader(program, vertexShader);
+                org.lwjgl.opengl.GL20.glAttachShader(program, fragmentShader);
+                org.lwjgl.opengl.GL20.glLinkProgram(program);
+
+                int linked = org.lwjgl.opengl.GL20.glGetProgrami(program, org.lwjgl.opengl.GL20.GL_LINK_STATUS);
+                String linkLog = org.lwjgl.opengl.GL20.glGetProgramInfoLog(program, 8192);
+
+                if (linked == org.lwjgl.opengl.GL11.GL_FALSE) {
+                    System.out.println("[Spectra/Oculus] Program link FAILED: " + programName);
+                    if (linkLog != null && !linkLog.trim().isEmpty()) {
+                        System.out.println("[Spectra/Oculus] Program link log: " + linkLog.trim());
+                    }
+                    return;
+                }
+
+                if (lastCompileTestProgram != 0) {
+                    org.lwjgl.opengl.GL20.glDeleteProgram(lastCompileTestProgram);
+                }
+
+                lastCompileTestProgram = program;
+                program = 0;
+
+                System.out.println("[Spectra/Oculus] Program linked successfully: " + programName + " id=" + lastCompileTestProgram);
+                if (linkLog != null && !linkLog.trim().isEmpty()) {
+                    System.out.println("[Spectra/Oculus] Program link log: " + linkLog.trim());
+                }
+            } catch (Throwable t) {
+                System.out.println("[Spectra/Oculus] Compile test crashed for program: " + programName);
+                t.printStackTrace();
+            } finally {
+                if (program != 0) {
+                    org.lwjgl.opengl.GL20.glDeleteProgram(program);
+                }
+
+                if (vertexShader != 0) {
+                    org.lwjgl.opengl.GL20.glDeleteShader(vertexShader);
+                }
+
+                if (fragmentShader != 0) {
+                    org.lwjgl.opengl.GL20.glDeleteShader(fragmentShader);
+                }
+            }
+        }
+
+        private static int compileShader(int type, String path, String source) {
+            int shader = org.lwjgl.opengl.GL20.glCreateShader(type);
+            org.lwjgl.opengl.GL20.glShaderSource(shader, source);
+            org.lwjgl.opengl.GL20.glCompileShader(shader);
+
+            int compiled = org.lwjgl.opengl.GL20.glGetShaderi(shader, org.lwjgl.opengl.GL20.GL_COMPILE_STATUS);
+            String compileLog = org.lwjgl.opengl.GL20.glGetShaderInfoLog(shader, 8192);
+
+            if (compiled == org.lwjgl.opengl.GL11.GL_FALSE) {
+                System.out.println("[Spectra/Oculus] Shader compile FAILED: " + path);
+                if (compileLog != null && !compileLog.trim().isEmpty()) {
+                    System.out.println("[Spectra/Oculus] Shader compile log: " + compileLog.trim());
+                }
+                org.lwjgl.opengl.GL20.glDeleteShader(shader);
+                return 0;
+            }
+
+            System.out.println("[Spectra/Oculus] Shader compiled successfully: " + path + " id=" + shader);
+            if (compileLog != null && !compileLog.trim().isEmpty()) {
+                System.out.println("[Spectra/Oculus] Shader compile log: " + compileLog.trim());
+            }
+            return shader;
+        }
+
+        private static String readShaderSourceWithIncludes(java.io.File shaderPack, String path) {
+            String source = readShaderSource(shaderPack, path);
+
+            if (source == null) {
+                return null;
+            }
+
+            return resolveShaderIncludes(shaderPack, path, source, 0);
+        }
+
+        private static String resolveShaderIncludes(java.io.File shaderPack, String currentPath, String source, int depth) {
+            if (depth > 16) {
+                System.out.println("[Spectra/Oculus] Include depth limit hit in: " + currentPath);
+                return source;
+            }
+
+            StringBuilder output = new StringBuilder();
+            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.StringReader(source));
+            String line;
+
+            try {
+                while ((line = reader.readLine()) != null) {
+                    String trimmed = line.trim();
+
+                    if (!trimmed.startsWith("#include")) {
+                        output.append(line).append('\n');
+                        continue;
+                    }
+
+                    String includePath = extractIncludePath(trimmed);
+
+                    if (includePath == null || includePath.trim().isEmpty()) {
+                        output.append("// Spectra/Oculus ignored bad include: ").append(line).append('\n');
+                        continue;
+                    }
+
+                    String resolvedPath = resolveIncludePath(currentPath, includePath.trim());
+                    String includeSource = readShaderSource(shaderPack, resolvedPath);
+
+                    if (includeSource == null) {
+                        System.out.println("[Spectra/Oculus] Missing include " + includePath + " resolved as " + resolvedPath + " from " + currentPath);
+                        output.append("// Spectra/Oculus missing include: ").append(includePath).append('\n');
+                        continue;
+                    }
+
+                    System.out.println("[Spectra/Oculus] Include " + includePath + " -> " + resolvedPath);
+                    output.append("// Spectra/Oculus begin include: ").append(resolvedPath).append('\n');
+                    output.append(resolveShaderIncludes(shaderPack, resolvedPath, includeSource, depth + 1));
+                    output.append("// Spectra/Oculus end include: ").append(resolvedPath).append('\n');
+                }
+            } catch (Exception e) {
+                System.out.println("[Spectra/Oculus] Failed while resolving includes for: " + currentPath);
+                e.printStackTrace();
+                return source;
+            }
+
+            return output.toString();
+        }
+
+        private static String extractIncludePath(String includeLine) {
+            int quoteStart = includeLine.indexOf('"');
+            int quoteEnd = includeLine.lastIndexOf('"');
+
+            if (quoteStart >= 0 && quoteEnd > quoteStart) {
+                return includeLine.substring(quoteStart + 1, quoteEnd);
+            }
+
+            int angleStart = includeLine.indexOf('<');
+            int angleEnd = includeLine.lastIndexOf('>');
+
+            if (angleStart >= 0 && angleEnd > angleStart) {
+                return includeLine.substring(angleStart + 1, angleEnd);
+            }
+
+            return null;
+        }
+
+        private static String resolveIncludePath(String currentPath, String includePath) {
+            String normalizedInclude = includePath.replace('\\', '/');
+
+            if (normalizedInclude.startsWith("/")) {
+                return normalizeShaderPath("shaders" + normalizedInclude);
+            }
+
+            String normalizedCurrent = currentPath.replace('\\', '/');
+            int slash = normalizedCurrent.lastIndexOf('/');
+            String parent = slash >= 0 ? normalizedCurrent.substring(0, slash + 1) : "";
+
+            return normalizeShaderPath(parent + normalizedInclude);
+        }
+
+        private static String normalizeShaderPath(String path) {
+            String[] parts = path.replace('\\', '/').split("/");
+            java.util.List<String> stack = new java.util.ArrayList<>();
+
+            for (String part : parts) {
+                if (part == null || part.isEmpty() || ".".equals(part)) {
+                    continue;
+                }
+
+                if ("..".equals(part)) {
+                    if (!stack.isEmpty()) {
+                        stack.remove(stack.size() - 1);
+                    }
+                    continue;
+                }
+
+                stack.add(part);
+            }
+
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < stack.size(); i++) {
+                if (i > 0) {
+                    builder.append('/');
+                }
+                builder.append(stack.get(i));
+            }
+
+            return builder.toString();
+        }
+
+        private static String readShaderSource(java.io.File shaderPack, String path) {
+            if (shaderPack.isDirectory()) {
+                java.io.File shaderFile = new java.io.File(shaderPack, path.replace('/', java.io.File.separatorChar));
+                if (!shaderFile.exists()) {
+                    return null;
+                }
+
+                try {
+                    return readAllText(new java.io.FileInputStream(shaderFile));
+                } catch (Exception e) {
+                    System.out.println("[Spectra/Oculus] Failed to read shader file: " + shaderFile.getAbsolutePath());
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            try {
+                java.util.zip.ZipFile zipFile = new java.util.zip.ZipFile(shaderPack);
+                java.util.zip.ZipEntry entry = zipFile.getEntry(path);
+
+                if (entry == null) {
+                    zipFile.close();
+                    return null;
+                }
+
+                String text = readAllText(zipFile.getInputStream(entry));
+                zipFile.close();
+                return text;
+            } catch (Exception e) {
+                System.out.println("[Spectra/Oculus] Failed to read shader zip entry: " + path);
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        private static String readAllText(java.io.InputStream inputStream) throws java.io.IOException {
+            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(inputStream, java.nio.charset.StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                builder.append(line).append('\n');
+            }
+
+            reader.close();
+            return builder.toString();
         }
 
         public static String getActiveShaderPack() {
