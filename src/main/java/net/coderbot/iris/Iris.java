@@ -554,6 +554,9 @@ public class Iris {
             int program = 0;
 
             try {
+                vertexSource = net.coderbot.iris.spectra.SpectraShaderPreprocessor.preprocess(vertexPath, vertexSource);
+                fragmentSource = net.coderbot.iris.spectra.SpectraShaderPreprocessor.preprocess(fragmentPath, fragmentSource);
+
                 vertexShader = compileShader(org.lwjgl.opengl.GL20.GL_VERTEX_SHADER, vertexPath, vertexSource);
                 if (vertexShader == 0) {
                     return;
@@ -614,6 +617,9 @@ public class Iris {
 
             String vertexSource = readShaderSourceWithIncludes(shaderPack, vertexPath);
             String fragmentSource = readShaderSourceWithIncludes(shaderPack, fragmentPath);
+
+            vertexSource = net.coderbot.iris.spectra.SpectraShaderPreprocessor.preprocess(vertexPath, vertexSource);
+            fragmentSource = net.coderbot.iris.spectra.SpectraShaderPreprocessor.preprocess(fragmentPath, fragmentSource);
 
             if (vertexSource == null) {
                 System.out.println("[Spectra/Oculus] Missing vertex shader source: " + vertexPath);
