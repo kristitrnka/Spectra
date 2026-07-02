@@ -5,7 +5,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod(
         modid = "oculus",
         name = "Spectra",
-        version = "@MOD_VERSION@",
+        version = "0.0.9",
         clientSideOnly = true
 )
 public class Iris {
@@ -494,36 +494,20 @@ public class Iris {
         private static net.coderbot.iris.spectra.SpectraProgramSet buildSpectraProgramSet(java.io.File shaderPack, java.util.List<String> shaderFiles) {
             net.coderbot.iris.spectra.SpectraProgramSet programSet = new net.coderbot.iris.spectra.SpectraProgramSet();
 
-            String[] programNames = new String[] {
-                    "final",
-                    "composite",
-                    "composite1",
-                    "composite2",
-                    "composite3",
-                    "composite4",
-                    "composite5",
-                    "composite6",
-                    "composite7",
-                    "composite8",
-                    "composite9",
-                    "composite10",
-                    "composite11",
-                    "composite12",
-                    "composite13",
-                    "composite14",
-                    "composite15",
-                    "gbuffers_basic",
-                    "gbuffers_textured",
-                    "gbuffers_textured_lit",
-                    "gbuffers_terrain"
-            };
-
-            for (String programName : programNames) {
-                String vertexPath = "shaders/" + programName + ".vsh";
-                String fragmentPath = "shaders/" + programName + ".fsh";
-
-                if (!shaderFiles.contains(vertexPath) || !shaderFiles.contains(fragmentPath)) {
+            for (String vertexPath : shaderFiles) {
+                if (!vertexPath.toLowerCase(java.util.Locale.ROOT).endsWith(".vsh")) {
                     continue;
+                }
+
+                String fragmentPath = vertexPath.substring(0, vertexPath.length() - 4) + ".fsh";
+
+                if (!shaderFiles.contains(fragmentPath)) {
+                    continue;
+                }
+
+                String programName = vertexPath.substring(0, vertexPath.length() - 4);
+                if (programName.startsWith("shaders/")) {
+                    programName = programName.substring("shaders/".length());
                 }
 
                 String vertexSource = readShaderSourceWithIncludes(shaderPack, vertexPath);
@@ -973,7 +957,13 @@ public class Iris {
         }
 
         public static void renderTestOverlay() {
-            if (!shaderPackLoaded || !postProcessTintEnabled) {
+            if (!shaderPackLoaded) {
+                return;
+            }
+
+            net.coderbot.iris.spectra.SpectraPostProcessor.render(lastCompileTestProgram);
+
+            if (!postProcessTintEnabled) {
                 return;
             }
 

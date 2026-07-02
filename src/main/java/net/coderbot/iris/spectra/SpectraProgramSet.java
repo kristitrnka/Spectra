@@ -23,12 +23,28 @@ public class SpectraProgramSet {
             return finalProgram;
         }
 
+        for (java.util.Map.Entry<String, SpectraProgramSource> entry : programs.entrySet()) {
+            String name = entry.getKey();
+
+            if ("final".equals(name) || name.endsWith("/final")) {
+                return entry.getValue();
+            }
+        }
+
         for (int i = 0; i < 16; i++) {
             String name = i == 0 ? "composite" : "composite" + i;
             SpectraProgramSource program = programs.get(name);
 
             if (program != null) {
                 return program;
+            }
+        }
+
+        for (java.util.Map.Entry<String, SpectraProgramSource> entry : programs.entrySet()) {
+            String name = entry.getKey();
+
+            if ("composite".equals(name) || name.endsWith("/composite")) {
+                return entry.getValue();
             }
         }
 
