@@ -5,7 +5,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod(
         modid = "oculus",
         name = "Spectra",
-        version = "0.0.9",
+        version = "0.0.10",
         clientSideOnly = true
 )
 public class Iris {

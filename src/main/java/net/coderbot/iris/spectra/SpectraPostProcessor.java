@@ -41,7 +41,7 @@ public class SpectraPostProcessor {
         int previousActiveTexture = GL11.glGetInteger(GL13.GL_ACTIVE_TEXTURE);
         int previousTexture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
         int previousMatrixMode = GL11.glGetInteger(GL11.GL_MATRIX_MODE);
-        int framebufferTexture = minecraft.getFramebuffer().framebufferTexture;
+        int framebufferTexture = SpectraFramebuffer.getOrCreateColorTexture();
 
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 
