@@ -190,3 +190,12 @@ tasks.withType(JavaCompile).configureEach {
         return !(modernPath || modernImports || brokenCompat)
     }
 }
+
+// Spectra mixin config for MixinBooter / Forge 1.12.2
+tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
+    manifest {
+        attributes(
+                "MixinConfigs": "mixins.spectra.json"
+        )
+    }
+}

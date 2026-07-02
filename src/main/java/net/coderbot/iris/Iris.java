@@ -14,7 +14,15 @@ public class Iris {
     @Mod.EventHandler
     public void init(net.minecraftforge.fml.common.event.FMLInitializationEvent event) {
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(GuiEvents.class);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(WorldRenderEvents.class);
         System.out.println("[Spectra/Oculus] Loaded baseline mod!");
+    }
+
+    public static class WorldRenderEvents {
+        @net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+        public static void onRenderWorldLast(net.minecraftforge.client.event.RenderWorldLastEvent event) {
+            SpectraShaderManager.renderDebugSkyHook(event.getPartialTicks());
+        }
     }
 
     public static class GuiEvents {
@@ -335,8 +343,10 @@ public class Iris {
         private static boolean renderTestLogged = false;
         private static boolean postProcessTintEnabled = false;
         private static boolean debugPipelineProgramEnabled = false;
+        private static boolean debugSkyHookEnabled = false;
         private static String debugRenderProgram = "gbuffers_skybasic";
         private static boolean debugPipelineProgramLogged = false;
+        private static boolean debugSkyHookLogged = false;
 
         public static void loadSelectedShaderPack(String shaderPackName) {
             activeShaderPack = shaderPackName == null || shaderPackName.trim().isEmpty()
@@ -1044,6 +1054,28 @@ public class Iris {
             }
         }
 
+        private static void renderDebugSkyHook(float partialTicks) {
+            if (!debugSkyHookEnabled || activePipeline == null || !shaderPackLoaded) {
+                return;
+            }
+
+            int skyProgramId = activePipeline.getSkyBasicProgramId();
+            if (skyProgramId == 0) {
+                if (!debugSkyHookLogged) {
+                    debugSkyHookLogged = true;
+                    System.out.println("[Spectra/Oculus] Debug sky hook skipped: no skybasic program");
+                }
+                return;
+            }
+
+            if (!debugSkyHookLogged) {
+                debugSkyHookLogged = true;
+                System.out.println("[Spectra/Oculus] Debug sky hook using skybasic id=" + skyProgramId + " partialTicks=" + partialTicks);
+            }
+
+            net.coderbot.iris.spectra.SpectraPostProcessor.render(skyProgramId);
+        }
+
         private static String readAllText(java.io.InputStream inputStream) throws java.io.IOException {
             java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(inputStream, java.nio.charset.StandardCharsets.UTF_8));
             StringBuilder builder = new StringBuilder();
@@ -1063,6 +1095,34 @@ public class Iris {
 
         public static boolean isShaderPackLoaded() {
             return shaderPackLoaded;
+        }
+
+        public static int getTerrainPipelineProgramId() {
+            if (activePipeline == null || !shaderPackLoaded) {
+                return 0;
+            }
+
+            return activePipeline.getTerrainProgramId();
+        }
+
+        public static int getWaterPipelineProgramId() {
+            if (activePipeline == null || !shaderPackLoaded) {
+                return 0;
+            }
+
+            return activePipeline.getWaterProgramId();
+        }
+
+        public static int getSkyBasicPipelineProgramId() {
+            if (activePipeline == null || !shaderPackLoaded) {
+                return 0;
+            }
+
+            return activePipeline.getSkyBasicProgramId();
+        }
+
+        public static boolean hasLoadedPipeline() {
+            return activePipeline != null && shaderPackLoaded;
         }
 
         public static void renderTestOverlay() {

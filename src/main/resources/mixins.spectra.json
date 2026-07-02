@@ -1,0 +1,11 @@
+{
+  "required": false,
+  "package": "net.coderbot.iris.spectra.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MixinRenderGlobalSpectraTerrain"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
