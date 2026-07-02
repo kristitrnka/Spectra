@@ -334,6 +334,9 @@ public class Iris {
         private static int overlayTestProgram = 0;
         private static boolean renderTestLogged = false;
         private static boolean postProcessTintEnabled = false;
+        private static boolean debugPipelineProgramEnabled = false;
+        private static String debugRenderProgram = "gbuffers_skybasic";
+        private static boolean debugPipelineProgramLogged = false;
 
         public static void loadSelectedShaderPack(String shaderPackName) {
             activeShaderPack = shaderPackName == null || shaderPackName.trim().isEmpty()
@@ -1053,6 +1056,22 @@ public class Iris {
             }
 
             int postProgramId = activePipeline != null ? activePipeline.getPostProcessProgramId() : lastCompileTestProgram;
+
+            if (debugPipelineProgramEnabled && activePipeline != null) {
+                int debugProgramId = activePipeline.getProgram(debugRenderProgram);
+                if (debugProgramId != 0) {
+                    postProgramId = debugProgramId;
+
+                    if (!debugPipelineProgramLogged) {
+                        debugPipelineProgramLogged = true;
+                        System.out.println("[Spectra/Oculus] Debug render using pipeline program " + debugRenderProgram + " id=" + debugProgramId);
+                    }
+                } else if (!debugPipelineProgramLogged) {
+                    debugPipelineProgramLogged = true;
+                    System.out.println("[Spectra/Oculus] Debug render program missing: " + debugRenderProgram);
+                }
+            }
+
             net.coderbot.iris.spectra.SpectraPostProcessor.render(postProgramId);
 
             if (!postProcessTintEnabled) {
