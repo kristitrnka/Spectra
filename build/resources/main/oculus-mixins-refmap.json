@@ -1,4 +1,26 @@
 {
-  "mappings": {},
-  "data": {}
+  "mappings": {
+    "net/coderbot/iris/mixin/GlStateManagerAccessor": {
+      "activeTextureUnit": "field_179162_o:I",
+      "alphaState": "field_179160_a:Lnet/minecraft/client/renderer/GlStateManager$AlphaState;",
+      "blendState": "field_179157_e:Lnet/minecraft/client/renderer/GlStateManager$BlendState;",
+      "colorMaskState": "field_179171_s:Lnet/minecraft/client/renderer/GlStateManager$ColorMask;",
+      "depthState": "field_179154_f:Lnet/minecraft/client/renderer/GlStateManager$DepthState;",
+      "fogState": "field_179155_g:Lnet/minecraft/client/renderer/GlStateManager$FogState;",
+      "textureState": "field_179174_p:[Lnet/minecraft/client/renderer/GlStateManager$TextureState;"
+    }
+  },
+  "data": {
+    "searge": {
+      "net/coderbot/iris/mixin/GlStateManagerAccessor": {
+        "activeTextureUnit": "field_179162_o:I",
+        "alphaState": "field_179160_a:Lnet/minecraft/client/renderer/GlStateManager$AlphaState;",
+        "blendState": "field_179157_e:Lnet/minecraft/client/renderer/GlStateManager$BlendState;",
+        "colorMaskState": "field_179171_s:Lnet/minecraft/client/renderer/GlStateManager$ColorMask;",
+        "depthState": "field_179154_f:Lnet/minecraft/client/renderer/GlStateManager$DepthState;",
+        "fogState": "field_179155_g:Lnet/minecraft/client/renderer/GlStateManager$FogState;",
+        "textureState": "field_179174_p:[Lnet/minecraft/client/renderer/GlStateManager$TextureState;"
+      }
+    }
+  }
 }

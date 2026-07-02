@@ -1,5 +1,6 @@
 package net.coderbot.iris.shaderpack;
 
+import java.util.function.Function;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -7,7 +8,6 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import it.unimi.dsi.fastutil.Function;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.coderbot.iris.shaderpack.materialmap.BlockEntry;
 import net.coderbot.iris.shaderpack.materialmap.NamespacedId;

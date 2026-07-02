@@ -22,7 +22,6 @@ import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.coderbot.iris.Iris;
-import net.coderbot.iris.gl.IrisRenderSystem;
 import net.coderbot.iris.gl.blending.AlphaTest;
 import net.coderbot.iris.gl.blending.AlphaTestFunction;
 import net.coderbot.iris.gl.blending.AlphaTestOverride;
@@ -216,7 +215,7 @@ public class ShaderProperties {
 			handlePassDirective("blend.", key, value, pass -> {
 				if (pass.contains(".")) {
 
-					if (!IrisRenderSystem.supportsBufferBlending()) {
+					if (!false) {
 						throw new RuntimeException("Buffer blending is not supported on this platform, however it was attempted to be used!");
 					}
 

@@ -1,70 +1,54 @@
 package net.coderbot.iris.features;
 
 import java.util.List;
-import java.util.function.BooleanSupplier;
-
-import net.minecraft.client.resources.I18n;
-import org.apache.commons.lang3.text.WordUtils;
-
-import net.coderbot.iris.gl.IrisRenderSystem;
 
 public enum FeatureFlags {
-	SEPARATE_HARDWARE_SAMPLERS(() -> true, () -> true),
-	PER_BUFFER_BLENDING(() -> true, IrisRenderSystem::supportsBufferBlending),
-	COMPUTE_SHADERS(() -> true, IrisRenderSystem::supportsCompute),
-	ENTITY_TRANSLUCENT(() -> true, () -> true),
-	UNKNOWN(() -> false, () -> false);
+    SEPARATE_HARDWARE_SAMPLERS,
+    COMPUTE_SHADERS,
+    CUSTOM_IMAGES,
+    SSBO,
+    TESSELLATION_SHADERS,
+    GEOMETRY_SHADERS,
+    UNKNOWN;
 
-	private final BooleanSupplier irisRequirement;
-	private final BooleanSupplier hardwareRequirement;
+    public boolean isInvalid() {
+        return this == UNKNOWN;
+    }
 
-	FeatureFlags(BooleanSupplier irisRequirement, BooleanSupplier hardwareRequirement) {
-		this.irisRequirement = irisRequirement;
-		this.hardwareRequirement = hardwareRequirement;
-	}
+    public boolean isUsable() {
+        return true;
+    }
 
-	public static String getInvalidStatus(List<FeatureFlags> invalidFeatureFlags) {
-		boolean unsupportedHardware = false, unsupportedIris = false;
-		FeatureFlags[] flags = invalidFeatureFlags.toArray(new FeatureFlags[0]);
-		for (FeatureFlags flag : flags) {
-			unsupportedIris |= !flag.irisRequirement.getAsBoolean();
-			unsupportedHardware |= !flag.hardwareRequirement.getAsBoolean();
-		}
+    public String getHumanReadableName() {
+        return name();
+    }
 
-		if (unsupportedIris) {
-			if (unsupportedHardware) {
-				return I18n.format("iris.unsupported.irisorpc");
-			}
+    public static boolean isInvalid(String value) {
+        return getValue(value) == UNKNOWN;
+    }
 
-			return I18n.format("iris.unsupported.iris");
-		} else if (unsupportedHardware) {
-			return I18n.format("iris.unsupported.pc");
-		} else {
-			return null;
-		}
-	}
+    public static FeatureFlags getValue(String value) {
+        if (value == null) {
+            return UNKNOWN;
+        }
 
-	public String getHumanReadableName() {
-		return WordUtils.capitalize(name().replace("_", " ").toLowerCase());
-	}
+        String normalized = value.trim().toUpperCase()
+            .replace('-', '_')
+            .replace(' ', '_');
 
-	public boolean isUsable() {
-		return irisRequirement.getAsBoolean() && hardwareRequirement.getAsBoolean();
-	}
+        for (FeatureFlags flag : values()) {
+            if (flag.name().equals(normalized)) {
+                return flag;
+            }
+        }
 
-	public static boolean isInvalid(String name) {
-		try {
-			return !FeatureFlags.valueOf(name).isUsable();
-		} catch (IllegalArgumentException e) {
-			return true;
-		}
-	}
+        return UNKNOWN;
+    }
 
-	public static FeatureFlags getValue(String value) {
-		try {
-			return FeatureFlags.valueOf(value);
-		} catch (IllegalArgumentException e) {
-			return FeatureFlags.UNKNOWN;
-		}
-	}
+    public static String getInvalidStatus(List<FeatureFlags> flags) {
+        if (flags == null || flags.isEmpty()) {
+            return "";
+        }
+        return flags.toString();
+    }
 }

@@ -121,24 +121,37 @@ tasks.withType(JavaCompile).configureEach {
 
         def text = file.getText('UTF-8')
 
+        boolean legacyPortAllow =
+            p.endsWith('/src/main/java/net/coderbot/iris/shaderpack/ShaderProperties.java') ||
+            p.endsWith('/src/main/java/net/coderbot/iris/shaderpack/ShaderPack.java') ||
+            p.endsWith('/src/main/java/net/coderbot/iris/mixin/GlStateManagerAccessor.java') ||
+            p.contains('/src/main/java/net/coderbot/iris/features/') ||
+            p.contains('/src/main/java/net/coderbot/iris/shaderpack/option/menu/') ||
+            p.contains('/src/main/java/net/irisshaders/iris/api/v0/')
+
+        boolean legacyGlStorageAllow =
+            p.endsWith('/src/main/java/net/coderbot/iris/gl/blending/AlphaTestStorage.java') ||
+            p.endsWith('/src/main/java/net/coderbot/iris/gl/blending/BlendModeStorage.java')
+
+        boolean legacyGuiStubAllow =
+            p.endsWith('/src/main/java/net/coderbot/iris/gui/FeatureMissingErrorScreen.java') ||
+            p.endsWith('/src/main/java/net/coderbot/iris/gui/screen/ShaderPackScreen.java')
+
         boolean modernPath =
+            p.contains('/src/main/java/net/coderbot/iris/shaderpack/option/menu/') ||
             p.contains('/src/main/java/net/irisshaders/iris/api/') ||
             p.contains('/src/main/java/net/coderbot/batchedentityrendering/') ||
             p.contains('/src/main/java/net/coderbot/iris/apiimpl/') ||
             p.contains('/src/main/java/net/coderbot/iris/compat/sodium/') ||
             p.contains('/src/main/java/net/coderbot/iris/config/') ||
-            p.contains('/src/main/java/net/coderbot/iris/colorspace/') ||
             p.contains('/src/main/java/net/coderbot/iris/fantastic/') ||
             p.contains('/src/main/java/net/coderbot/iris/gui/') ||
             p.contains('/src/main/java/net/coderbot/iris/block_rendering/') ||
-            p.contains('/src/main/java/net/coderbot/iris/gl/blending/') ||
             p.contains('/src/main/java/net/coderbot/iris/gl/program/') ||
             p.contains('/src/main/java/net/coderbot/iris/gl/sampler/') ||
             p.contains('/src/main/java/net/coderbot/iris/gl/image/') ||
             p.contains('/src/main/java/net/coderbot/iris/gl/framebuffer/') ||
             p.contains('/src/main/java/net/coderbot/iris/gl/shader/') ||
-            p.contains('/src/main/java/net/coderbot/iris/shaderpack/') ||
-            p.contains('/src/main/java/net/coderbot/iris/gl/texture/') ||
             p.contains('/src/main/java/net/coderbot/iris/gl/uniform/') ||
             p.contains('/src/main/java/net/coderbot/iris/helpers/') ||
             p.contains('/src/main/java/net/coderbot/iris/layer/') ||
@@ -187,7 +200,7 @@ tasks.withType(JavaCompile).configureEach {
         boolean brokenCompat =
             p.endsWith('/src/main/java/nanolive/compat/NativeImage.java')
 
-        return !(modernPath || modernImports || brokenCompat)
+        return legacyPortAllow || legacyGlStorageAllow || legacyGuiStubAllow || !(modernPath || modernImports || brokenCompat)
     }
 }
 

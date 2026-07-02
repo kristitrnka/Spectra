@@ -1297,4 +1297,24 @@ public class Iris {
             super.drawScreen(mouseX, mouseY, partialTicks);
         }
     }
+    public static final org.apache.logging.log4j.Logger logger =
+        org.apache.logging.log4j.LogManager.getLogger("Spectra/Oculus");
+
+    public static java.nio.file.Path getShaderpacksDirectory() {
+        return net.minecraft.client.Minecraft.getMinecraft().gameDir.toPath().resolve("shaderpacks");
+    }
+
+    public static boolean isValidToShowPack(java.nio.file.Path path) {
+        if (path == null) {
+            return false;
+        }
+        String name = path.getFileName() == null ? "" : path.getFileName().toString();
+        return !name.startsWith(".") && (java.nio.file.Files.isDirectory(path) || name.endsWith(".zip"));
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static java.util.Map getShaderPackOptionQueue() {
+        return java.util.Collections.emptyMap();
+    }
+
 }
