@@ -7,6 +7,10 @@ public class SpectraProgramSource {
     private final String vertexSource;
     private final String fragmentSource;
 
+    public SpectraProgramSource(String name, String vertexPath, String fragmentPath) {
+        this(name, vertexPath, fragmentPath, null, null);
+    }
+
     public SpectraProgramSource(String name, String vertexPath, String fragmentPath, String vertexSource, String fragmentSource) {
         this.name = name;
         this.vertexPath = vertexPath;
@@ -35,7 +39,11 @@ public class SpectraProgramSource {
         return fragmentSource;
     }
 
-    public boolean isValid() {
+    public boolean hasInlineSource() {
         return vertexSource != null && fragmentSource != null;
+    }
+
+    public boolean isValid() {
+        return name != null && vertexPath != null && fragmentPath != null;
     }
 }

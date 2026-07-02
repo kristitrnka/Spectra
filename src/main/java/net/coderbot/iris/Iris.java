@@ -477,14 +477,14 @@ public class Iris {
             net.coderbot.iris.spectra.SpectraProgramSource postProgram = programSet.getFirstPostProcessProgram();
             if (postProgram != null) {
                 System.out.println("[Spectra/Oculus] Spectra selected post-process program: " + postProgram.getName());
-                compileProgramSource(postProgram);
+                compileProgramSource(shaderPack, postProgram);
                 return;
             }
 
             net.coderbot.iris.spectra.SpectraProgramSource gbuffersProgram = programSet.getFirstGbuffersProgram();
             if (gbuffersProgram != null) {
                 System.out.println("[Spectra/Oculus] Spectra selected gbuffers fallback program: " + gbuffersProgram.getName());
-                compileProgramSource(gbuffersProgram);
+                compileProgramSource(shaderPack, gbuffersProgram);
                 return;
             }
 
@@ -510,31 +510,38 @@ public class Iris {
                     programName = programName.substring("shaders/".length());
                 }
 
-                String vertexSource = readShaderSourceWithIncludes(shaderPack, vertexPath);
-                String fragmentSource = readShaderSourceWithIncludes(shaderPack, fragmentPath);
-
                 programSet.addProgram(new net.coderbot.iris.spectra.SpectraProgramSource(
                         programName,
                         vertexPath,
-                        fragmentPath,
-                        vertexSource,
-                        fragmentSource
+                        fragmentPath
                 ));
             }
 
             return programSet;
         }
 
-        private static void compileProgramSource(net.coderbot.iris.spectra.SpectraProgramSource programSource) {
+        private static void compileProgramSource(java.io.File shaderPack, net.coderbot.iris.spectra.SpectraProgramSource programSource) {
+            String vertexSource = programSource.getVertexSource();
+            String fragmentSource = programSource.getFragmentSource();
+
+            if (vertexSource == null) {
+                vertexSource = readShaderSourceWithIncludes(shaderPack, programSource.getVertexPath());
+            }
+
+            if (fragmentSource == null) {
+                fragmentSource = readShaderSourceWithIncludes(shaderPack, programSource.getFragmentPath());
+            }
+
             compileTestProgram(
-                    null,
+                    shaderPack,
                     programSource.getName(),
                     programSource.getVertexPath(),
                     programSource.getFragmentPath(),
-                    programSource.getVertexSource(),
-                    programSource.getFragmentSource()
+                    vertexSource,
+                    fragmentSource
             );
         }
+
 
         private static void compileTestProgram(java.io.File shaderPack, String programName, String vertexPath, String fragmentPath, String vertexSource, String fragmentSource) {
             System.out.println("[Spectra/Oculus] Compile ProgramSet program: " + programName);
