@@ -1,3 +1,5 @@
+#THIS MOD REQUIERES MIXN BOOTER AND **VINTAGIUM** TO WORK!! 
+
 <p align="center">
   <img src="banner.png">
 </p>
