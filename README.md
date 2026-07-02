@@ -1,4 +1,3 @@
-#THIS MOD REQUIERES MIXN BOOTER AND **VINTAGIUM** TO WORK!! 
 
 <p align="center">
   <img src="banner.png">
@@ -15,7 +14,7 @@ The goal of Spectra is to bring modern shader support to legacy Forge modpacks w
 ---
 
 ## Disclaimer
-
+- This mod requiere Mixin Booter and Vintagium
 - Spectra is **not** compatible with OptiFine.
 - This project is based on the work of the **Iris** and **Oculus** developers.
 - Expect bugs and unfinished features.
