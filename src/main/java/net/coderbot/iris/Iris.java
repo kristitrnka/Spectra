@@ -557,7 +557,22 @@ public class Iris {
             compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_beaconbeam");
             compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_damagedblock");
 
+            logPipelineProgramChoices();
             clearSpectraGlErrors("after pipeline compile");
+        }
+
+        private static void logPipelineProgramChoices() {
+            if (activePipeline == null) {
+                return;
+            }
+
+            System.out.println("[Spectra/Oculus] Pipeline terrain selected id=" + activePipeline.getTerrainProgramId());
+            System.out.println("[Spectra/Oculus] Pipeline water selected id=" + activePipeline.getWaterProgramId());
+            System.out.println("[Spectra/Oculus] Pipeline skybasic selected id=" + activePipeline.getSkyBasicProgramId());
+            System.out.println("[Spectra/Oculus] Pipeline skytextured selected id=" + activePipeline.getSkyTexturedProgramId());
+            System.out.println("[Spectra/Oculus] Pipeline entities selected id=" + activePipeline.getEntitiesProgramId());
+            System.out.println("[Spectra/Oculus] Pipeline weather selected id=" + activePipeline.getWeatherProgramId());
+            System.out.println("[Spectra/Oculus] Pipeline clouds selected id=" + activePipeline.getCloudsProgramId());
         }
 
         private static void clearSpectraGlErrors(String stage) {
