@@ -484,6 +484,7 @@ public class Iris {
                         activePipeline = new net.coderbot.iris.spectra.SpectraPipeline();
                     }
                     activePipeline.setPostProcessProgramId(postProgramId);
+                    compileGbuffersPrograms(shaderPack, programSet);
                 }
                 return;
             }
@@ -525,6 +526,55 @@ public class Iris {
             }
 
             return programSet;
+        }
+
+        private static void compileGbuffersPrograms(java.io.File shaderPack, net.coderbot.iris.spectra.SpectraProgramSet programSet) {
+            if (activePipeline == null) {
+                activePipeline = new net.coderbot.iris.spectra.SpectraPipeline();
+            }
+
+            compileNamedGbuffersProgram(shaderPack, programSet, "gbuffers_basic", "basic");
+            compileNamedGbuffersProgram(shaderPack, programSet, "gbuffers_textured", "textured");
+            compileNamedGbuffersProgram(shaderPack, programSet, "gbuffers_terrain", "terrain");
+        }
+
+        private static void compileNamedGbuffersProgram(java.io.File shaderPack, net.coderbot.iris.spectra.SpectraProgramSet programSet, String programName, String slotName) {
+            net.coderbot.iris.spectra.SpectraProgramSource source = programSet.get(programName);
+
+            if (source == null) {
+                source = findProgramEndingWith(programSet, "/" + programName);
+            }
+
+            if (source == null) {
+                System.out.println("[Spectra/Oculus] Pipeline skipped " + programName + ": not found");
+                return;
+            }
+
+            System.out.println("[Spectra/Oculus] Pipeline compiling " + programName + " from " + source.getName());
+            int programId = compileProgramSource(shaderPack, source);
+
+            if (programId == 0) {
+                System.out.println("[Spectra/Oculus] Pipeline failed to compile " + programName);
+                return;
+            }
+
+            if ("basic".equals(slotName)) {
+                activePipeline.setGbuffersBasicProgramId(programId);
+            } else if ("textured".equals(slotName)) {
+                activePipeline.setGbuffersTexturedProgramId(programId);
+            } else if ("terrain".equals(slotName)) {
+                activePipeline.setGbuffersTerrainProgramId(programId);
+            }
+        }
+
+        private static net.coderbot.iris.spectra.SpectraProgramSource findProgramEndingWith(net.coderbot.iris.spectra.SpectraProgramSet programSet, String suffix) {
+            for (net.coderbot.iris.spectra.SpectraProgramSource source : programSet.getPrograms()) {
+                if (source.getName().endsWith(suffix)) {
+                    return source;
+                }
+            }
+
+            return null;
         }
 
         private static int compileProgramSource(java.io.File shaderPack, net.coderbot.iris.spectra.SpectraProgramSource programSource) {

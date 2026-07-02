@@ -70,6 +70,10 @@ public class SpectraProgramSet {
         return null;
     }
 
+    public java.util.Collection<SpectraProgramSource> getPrograms() {
+        return programs.values();
+    }
+
     public int size() {
         return programs.size();
     }

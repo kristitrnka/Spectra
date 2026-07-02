@@ -10,6 +10,7 @@ public class SpectraShaderPreprocessor {
 
         String normalized = source.replace("\r\n", "\n").replace("\r", "\n");
 
+        normalized = hoistExtensions(path, normalized);
         normalized = injectDefaultDefines(normalized);
         normalized = sanitizePreprocessorLines(path, normalized);
 
@@ -19,6 +20,56 @@ public class SpectraShaderPreprocessor {
         }
 
         return normalized;
+    }
+
+    private static String hoistExtensions(String path, String source) {
+        String[] lines = source.split("\n", -1);
+        java.util.List<String> extensions = new java.util.ArrayList<String>();
+        java.util.List<String> body = new java.util.ArrayList<String>();
+
+        String versionLine = null;
+        boolean movedAny = false;
+
+        for (String line : lines) {
+            String trimmed = line.trim();
+
+            if (versionLine == null && trimmed.startsWith("#version")) {
+                versionLine = line;
+                continue;
+            }
+
+            if (trimmed.startsWith("#extension")) {
+                if (!extensions.contains(line)) {
+                    extensions.add(line);
+                }
+                movedAny = true;
+                continue;
+            }
+
+            body.add(line);
+        }
+
+        StringBuilder out = new StringBuilder(source.length() + 256);
+
+        if (versionLine != null) {
+            out.append(versionLine).append('\n');
+        } else {
+            out.append("#version 120\n");
+        }
+
+        for (String extension : extensions) {
+            out.append(extension).append('\n');
+        }
+
+        for (String line : body) {
+            out.append(line).append('\n');
+        }
+
+        if (movedAny) {
+            System.out.println("[Spectra/Oculus] Preprocessor hoisted #extension lines in " + path + ": " + extensions.size());
+        }
+
+        return out.toString();
     }
 
     private static String injectDefaultDefines(String source) {
@@ -49,12 +100,35 @@ public class SpectraShaderPreprocessor {
             return "#version 120\n" + defines + source;
         }
 
-        int endOfVersionLine = source.indexOf('\n', versionIndex);
-        if (endOfVersionLine < 0) {
+        int insertPos = source.indexOf('\n', versionIndex);
+        if (insertPos < 0) {
             return source + defines;
         }
 
-        return source.substring(0, endOfVersionLine + 1) + defines + source.substring(endOfVersionLine + 1);
+        insertPos++;
+
+        while (insertPos < source.length()) {
+            int lineEnd = source.indexOf('\n', insertPos);
+            if (lineEnd < 0) {
+                lineEnd = source.length();
+            }
+
+            String line = source.substring(insertPos, lineEnd).trim();
+
+            if (line.startsWith("#extension")) {
+                insertPos = lineEnd < source.length() ? lineEnd + 1 : lineEnd;
+                continue;
+            }
+
+            if (line.length() == 0 || line.startsWith("//")) {
+                insertPos = lineEnd < source.length() ? lineEnd + 1 : lineEnd;
+                continue;
+            }
+
+            break;
+        }
+
+        return source.substring(0, insertPos) + defines + source.substring(insertPos);
     }
 
     private static String sanitizePreprocessorLines(String path, String source) {
@@ -72,6 +146,7 @@ public class SpectraShaderPreprocessor {
                 expression = expression.replaceAll("!\\s+defined\\s*\\(", "!defined(");
 
                 if (looksUnsafeForAppleGlsl(expression)) {
+                    System.out.println("[Spectra/Oculus] Preprocessor sanitized unsafe " + keyword + " in " + path + ": " + expression);
                     result.append(keyword).append(" 1");
                     result.append(" // Spectra sanitized from: ").append(expression.replace('\t', ' '));
                     result.append('\n');
