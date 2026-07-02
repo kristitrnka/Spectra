@@ -2,34 +2,33 @@ package net.coderbot.iris.spectra;
 
 import org.lwjgl.opengl.GL20;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class SpectraPipeline {
     private int postProcessProgramId;
-    private int gbuffersBasicProgramId;
-    private int gbuffersTexturedProgramId;
-    private int gbuffersTerrainProgramId;
+    private final Map<String, Integer> programs = new LinkedHashMap<String, Integer>();
 
     public void setPostProcessProgramId(int programId) {
         deleteProgram(this.postProcessProgramId);
         this.postProcessProgramId = programId;
+        setProgram("final", programId);
         System.out.println("[Spectra/Oculus] Pipeline post-process program id=" + programId);
     }
 
-    public void setGbuffersBasicProgramId(int programId) {
-        deleteProgram(this.gbuffersBasicProgramId);
-        this.gbuffersBasicProgramId = programId;
-        System.out.println("[Spectra/Oculus] Pipeline gbuffers_basic program id=" + programId);
+    public void setProgram(String name, int programId) {
+        Integer oldProgram = programs.get(name);
+        if (oldProgram != null && oldProgram != programId) {
+            deleteProgram(oldProgram);
+        }
+
+        programs.put(name, programId);
+        System.out.println("[Spectra/Oculus] Pipeline program " + name + " id=" + programId);
     }
 
-    public void setGbuffersTexturedProgramId(int programId) {
-        deleteProgram(this.gbuffersTexturedProgramId);
-        this.gbuffersTexturedProgramId = programId;
-        System.out.println("[Spectra/Oculus] Pipeline gbuffers_textured program id=" + programId);
-    }
-
-    public void setGbuffersTerrainProgramId(int programId) {
-        deleteProgram(this.gbuffersTerrainProgramId);
-        this.gbuffersTerrainProgramId = programId;
-        System.out.println("[Spectra/Oculus] Pipeline gbuffers_terrain program id=" + programId);
+    public int getProgram(String name) {
+        Integer programId = programs.get(name);
+        return programId != null ? programId : 0;
     }
 
     public int getPostProcessProgramId() {
@@ -37,35 +36,50 @@ public class SpectraPipeline {
     }
 
     public int getGbuffersBasicProgramId() {
-        return gbuffersBasicProgramId;
+        return getProgram("gbuffers_basic");
     }
 
     public int getGbuffersTexturedProgramId() {
-        return gbuffersTexturedProgramId;
+        return getProgram("gbuffers_textured");
     }
 
     public int getGbuffersTerrainProgramId() {
-        return gbuffersTerrainProgramId;
+        return getProgram("gbuffers_terrain");
     }
 
     public boolean hasPostProcessProgram() {
         return postProcessProgramId != 0;
     }
 
+    public boolean hasProgram(String name) {
+        return getProgram(name) != 0;
+    }
+
     public boolean hasAnyGbuffersProgram() {
-        return gbuffersBasicProgramId != 0 || gbuffersTexturedProgramId != 0 || gbuffersTerrainProgramId != 0;
+        for (String name : programs.keySet()) {
+            if (name.startsWith("gbuffers_") && getProgram(name) != 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void destroy() {
-        deleteProgram(postProcessProgramId);
-        deleteProgram(gbuffersBasicProgramId);
-        deleteProgram(gbuffersTexturedProgramId);
-        deleteProgram(gbuffersTerrainProgramId);
+        java.util.HashSet<Integer> deletedPrograms = new java.util.HashSet<Integer>();
+
+        if (postProcessProgramId != 0 && deletedPrograms.add(postProcessProgramId)) {
+            deleteProgram(postProcessProgramId);
+        }
+
+        for (Integer programId : programs.values()) {
+            if (programId != null && programId != 0 && deletedPrograms.add(programId)) {
+                deleteProgram(programId);
+            }
+        }
 
         postProcessProgramId = 0;
-        gbuffersBasicProgramId = 0;
-        gbuffersTexturedProgramId = 0;
-        gbuffersTerrainProgramId = 0;
+        programs.clear();
 
         SpectraFramebuffer.destroy();
 

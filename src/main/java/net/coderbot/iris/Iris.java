@@ -533,12 +533,41 @@ public class Iris {
                 activePipeline = new net.coderbot.iris.spectra.SpectraPipeline();
             }
 
-            compileNamedGbuffersProgram(shaderPack, programSet, "gbuffers_basic", "basic");
-            compileNamedGbuffersProgram(shaderPack, programSet, "gbuffers_textured", "textured");
-            compileNamedGbuffersProgram(shaderPack, programSet, "gbuffers_terrain", "terrain");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_basic");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_textured");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_terrain");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_block");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_block_translucent");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_water");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_hand");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_hand_water");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_entities");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_entities_translucent");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_particles");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_particles_translucent");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_skybasic");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_skytextured");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_clouds");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_weather");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_armor_glint");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_spidereyes");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_beaconbeam");
+            compileNamedPipelineProgram(shaderPack, programSet, "gbuffers_damagedblock");
+
+            clearSpectraGlErrors("after pipeline compile");
         }
 
-        private static void compileNamedGbuffersProgram(java.io.File shaderPack, net.coderbot.iris.spectra.SpectraProgramSet programSet, String programName, String slotName) {
+        private static void clearSpectraGlErrors(String stage) {
+            int error;
+            int count = 0;
+
+            while ((error = org.lwjgl.opengl.GL11.glGetError()) != org.lwjgl.opengl.GL11.GL_NO_ERROR && count < 32) {
+                count++;
+                System.out.println("[Spectra/Oculus] Cleared GL error " + error + " " + stage);
+            }
+        }
+
+        private static void compileNamedPipelineProgram(java.io.File shaderPack, net.coderbot.iris.spectra.SpectraProgramSet programSet, String programName) {
             net.coderbot.iris.spectra.SpectraProgramSource source = programSet.get(programName);
 
             if (source == null) {
@@ -558,13 +587,7 @@ public class Iris {
                 return;
             }
 
-            if ("basic".equals(slotName)) {
-                activePipeline.setGbuffersBasicProgramId(programId);
-            } else if ("textured".equals(slotName)) {
-                activePipeline.setGbuffersTexturedProgramId(programId);
-            } else if ("terrain".equals(slotName)) {
-                activePipeline.setGbuffersTerrainProgramId(programId);
-            }
+            activePipeline.setProgram(programName, programId);
         }
 
         private static net.coderbot.iris.spectra.SpectraProgramSource findProgramEndingWith(net.coderbot.iris.spectra.SpectraProgramSet programSet, String suffix) {
@@ -646,11 +669,6 @@ public class Iris {
                     }
                     return 0;
                 }
-
-                if (lastCompileTestProgram != 0) {
-                    org.lwjgl.opengl.GL20.glDeleteProgram(lastCompileTestProgram);
-                }
-
                 lastCompileTestProgram = program;
                 program = 0;
 
