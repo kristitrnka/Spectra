@@ -330,6 +330,7 @@ public class Iris {
         private static String activeShaderPack = "OFF";
         private static boolean shaderPackLoaded = false;
         private static int lastCompileTestProgram = 0;
+        private static net.coderbot.iris.spectra.SpectraPipeline activePipeline = null;
         private static int overlayTestProgram = 0;
         private static boolean renderTestLogged = false;
         private static boolean postProcessTintEnabled = false;
@@ -477,7 +478,13 @@ public class Iris {
             net.coderbot.iris.spectra.SpectraProgramSource postProgram = programSet.getFirstPostProcessProgram();
             if (postProgram != null) {
                 System.out.println("[Spectra/Oculus] Spectra selected post-process program: " + postProgram.getName());
-                compileProgramSource(shaderPack, postProgram);
+                int postProgramId = compileProgramSource(shaderPack, postProgram);
+                if (postProgramId != 0) {
+                    if (activePipeline == null) {
+                        activePipeline = new net.coderbot.iris.spectra.SpectraPipeline();
+                    }
+                    activePipeline.setPostProcessProgramId(postProgramId);
+                }
                 return;
             }
 
@@ -520,7 +527,7 @@ public class Iris {
             return programSet;
         }
 
-        private static void compileProgramSource(java.io.File shaderPack, net.coderbot.iris.spectra.SpectraProgramSource programSource) {
+        private static int compileProgramSource(java.io.File shaderPack, net.coderbot.iris.spectra.SpectraProgramSource programSource) {
             String vertexSource = programSource.getVertexSource();
             String fragmentSource = programSource.getFragmentSource();
 
@@ -532,7 +539,7 @@ public class Iris {
                 fragmentSource = readShaderSourceWithIncludes(shaderPack, programSource.getFragmentPath());
             }
 
-            compileTestProgram(
+            return compileTestProgram(
                     shaderPack,
                     programSource.getName(),
                     programSource.getVertexPath(),
@@ -543,17 +550,17 @@ public class Iris {
         }
 
 
-        private static void compileTestProgram(java.io.File shaderPack, String programName, String vertexPath, String fragmentPath, String vertexSource, String fragmentSource) {
+        private static int compileTestProgram(java.io.File shaderPack, String programName, String vertexPath, String fragmentPath, String vertexSource, String fragmentSource) {
             System.out.println("[Spectra/Oculus] Compile ProgramSet program: " + programName);
 
             if (vertexSource == null) {
                 System.out.println("[Spectra/Oculus] Missing vertex shader source: " + vertexPath);
-                return;
+                return 0;
             }
 
             if (fragmentSource == null) {
                 System.out.println("[Spectra/Oculus] Missing fragment shader source: " + fragmentPath);
-                return;
+                return 0;
             }
 
             int vertexShader = 0;
@@ -566,12 +573,12 @@ public class Iris {
 
                 vertexShader = compileShader(org.lwjgl.opengl.GL20.GL_VERTEX_SHADER, vertexPath, vertexSource);
                 if (vertexShader == 0) {
-                    return;
+                    return 0;
                 }
 
                 fragmentShader = compileShader(org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER, fragmentPath, fragmentSource);
                 if (fragmentShader == 0) {
-                    return;
+                    return 0;
                 }
 
                 program = org.lwjgl.opengl.GL20.glCreateProgram();
@@ -587,7 +594,7 @@ public class Iris {
                     if (linkLog != null && !linkLog.trim().isEmpty()) {
                         System.out.println("[Spectra/Oculus] Program link log: " + linkLog.trim());
                     }
-                    return;
+                    return 0;
                 }
 
                 if (lastCompileTestProgram != 0) {
@@ -601,6 +608,7 @@ public class Iris {
                 if (linkLog != null && !linkLog.trim().isEmpty()) {
                     System.out.println("[Spectra/Oculus] Program link log: " + linkLog.trim());
                 }
+                return lastCompileTestProgram;
             } catch (Throwable t) {
                 System.out.println("[Spectra/Oculus] ProgramSet compile crashed for program: " + programName);
                 t.printStackTrace();
@@ -617,6 +625,8 @@ public class Iris {
                     org.lwjgl.opengl.GL20.glDeleteShader(fragmentShader);
                 }
             }
+
+            return 0;
         }
 
         private static void compileTestProgram(java.io.File shaderPack, String programName, String vertexPath, String fragmentPath) {
@@ -974,7 +984,8 @@ public class Iris {
                 return;
             }
 
-            net.coderbot.iris.spectra.SpectraPostProcessor.render(lastCompileTestProgram);
+            int postProgramId = activePipeline != null ? activePipeline.getPostProcessProgramId() : lastCompileTestProgram;
+            net.coderbot.iris.spectra.SpectraPostProcessor.render(postProgramId);
 
             if (!postProcessTintEnabled) {
                 return;
